@@ -3,17 +3,18 @@
 
 int main()
 {
- size_t cap_of_cache;
- int num_of_calls;
+
+size_t cap_of_cache;
+int num_of_calls;
 std::vector<int> pages;
 
-std::cout << "Enter the size:\n";
+//std::cout << "Enter the size:\n";
 std::cin >> cap_of_cache;
 
-std::cout << "Enter num of calls:\n";
+//std::cout << "Enter num of calls:\n";
 std::cin >> num_of_calls;
 
-std::cout << "Enter the pages:\n";
+//std::cout << "Enter the pages:\n";
 
 int page;
 

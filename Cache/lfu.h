@@ -65,27 +65,27 @@ public:
     Cache(size_t cap) : capacity(cap) {}
 
 
-////////////////////////////////////////////
+
     bool lookup(const T &elem)
     {
-        //ищем элемент в хэш таблице по его знаечнию. допустим, какой-нибудь элемент а
-        std::cout << "hui\n";
+        //find element in the map
         HashIt entry = hash_.find(elem);
 
         //if there's no such element in the map
         if (entry == hash_.end())
         {
- 
+            //element wasn't found, insert new
             insert_item(elem);
             
-            return false;//не нашли; вставили новый
+            return false;
         }
 
+        //element was found
         incr_frequency(entry->second);
-        return true;//нашли, увеличили частоту
+        return true;
     }
 
-/////////////////////////////////////////////
+
     int test_processing(std::vector<int> &pages, int calls)
     {
         int hits = 0;
@@ -108,15 +108,12 @@ private:
     {
         if (freqlist_.size() > 0)
         {
-        //найти самую маленькую частоту и удалить элемент с конца items_
+        hash_.erase(freqlist_.front().items_.back().data_);//delete el from hashtable
+        freqlist_.front().items_.pop_back();//delete from freqlist
 
-        hash_.erase(freqlist_.front().items_.back().data_);//удалили элемент из хэш таблицы
-        freqlist_.front().items_.pop_back();//удалили из частотного списка
-
-
-        //если после удаления список items_ оказался пуст
+        //if items_ become empty after deletion
         if (freqlist_.front().items_.empty())
-            freqlist_.pop_front();//удаляем ваще этот частотный узел из cсписка
+            freqlist_.pop_front();//delete freqnode from freqlist
         }
     }
 
@@ -130,38 +127,32 @@ private:
         if (freqlist_.empty() || freqlist_.front().hits_ != 1)
             freqlist_.push_front(FreqNode<T>());
         
-        auto& item_list = freqlist_.begin()->items_;
-        const Item<T>& item_to_ins = Item<T>(elem, freqlist_.begin());
-        item_list.push_front(item_to_ins);
+        freqlist_.front().items_.push_front((Item<T>(elem, freqlist_.begin())));
 
-        std::cout << "hui";
 
-        ItemIt<T> item_beg_it = freqlist_.begin()->items_.begin();
-
-        if (!hash_.insert({elem, item_beg_it}).second) {
-            std::cout << "insert wasn't succes...\n";
+        hash_.insert({elem, freqlist_.front().items_.begin()});
             return;
-        }
+        
     }
-
-
-
 
     void incr_frequency(ItemIt<T> &item_it)
     {
         FreqIt<T> freq_it = item_it->parent_; 
-        FreqIt<T> next_freq_it = ++freq_it;
 
-        //уже есть с новой частотой!
+        //проверка на валидность cout + return
+        FreqIt<T> next_freq_it = ++freq_it;
+        --freq_it;
+
+        //element with freq + 1 already exists
         if ((next_freq_it != freqlist_.end()) && (next_freq_it->hits_ == freq_it->hits_ + 1))
         {
             next_freq_it->items_.push_front(Item<T> (item_it->data_, next_freq_it));
             Change_freq(item_it, freq_it, next_freq_it);
         }
 
-        //еще нет с новой частотой
+        //element with freq doesnt exist
         FreqIt<T> new_freq_it = freqlist_.insert(next_freq_it, FreqNode<T>(freq_it->hits_ + 1));
-        new_freq_it->items_.push_front(Item<T>(item_it->data_, new_freq_it));\
+        new_freq_it->items_.push_front(Item<T>(item_it->data_, new_freq_it));
         Change_freq(item_it, freq_it, new_freq_it);
     }
 
@@ -169,13 +160,11 @@ private:
     void Change_freq(ItemIt<T> &item_it, FreqIt<T> &cur, FreqIt<T> &fut)
     {
         hash_.erase(item_it->data_);
-        hash_[item_it->data_] = fut->items_.begin();
+        hash_.insert({item_it->data_, fut->items_.begin()});
         cur->items_.erase(item_it);
         if(cur->items_.empty())
             freqlist_.erase(cur);
     }
 };
-
-
 
 #endif 
