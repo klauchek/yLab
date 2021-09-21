@@ -66,7 +66,7 @@ public:
 
 
 
-    bool lookup(const T &elem)
+    bool lookup(const T elem)
     {
         //find element in the map
         HashIt entry = hash_.find(elem);
@@ -86,13 +86,16 @@ public:
     }
 
 
-    int test_processing(std::vector<int> &pages, int calls)
+    int test_processing(int calls)
     {
         int hits = 0;
 
         for (int i = 0; i < calls; ++i)
-        {
-            if (lookup(pages[i]))
+        {   
+            int page = 0;
+            std::cout << i <<"\n";
+            std::cin >> page; 
+            if (lookup(page))
                 ++hits;
         }
 
@@ -119,7 +122,7 @@ private:
 
 
 
-    void insert_item (T elem)
+    void insert_item (const T elem)
     {
         if (hash_.size() >= capacity)
             delete_lf_used();
@@ -128,40 +131,42 @@ private:
             freqlist_.push_front(FreqNode<T>());
         
         freqlist_.front().items_.push_front((Item<T>(elem, freqlist_.begin())));
-
-
         hash_.insert({elem, freqlist_.front().items_.begin()});
-            return;
-        
+
     }
 
-    void incr_frequency(ItemIt<T> &item_it)
+    void incr_frequency(ItemIt<T> item_it)
     {
-        FreqIt<T> freq_it = item_it->parent_; 
 
-        //проверка на валидность cout + return
+        if (next(item_it->parent_) == freqlist_.end())
+        {
+            freqlist_.push_back(FreqNode<T>(item_it->parent_->hits_ + 1));
+        }
+
+        FreqIt<T> freq_it = item_it->parent_; 
         FreqIt<T> next_freq_it = ++freq_it;
         --freq_it;
 
         //element with freq + 1 already exists
-        if ((next_freq_it != freqlist_.end()) && (next_freq_it->hits_ == freq_it->hits_ + 1))
+        if (next_freq_it->hits_ == freq_it->hits_ + 1)
         {
             next_freq_it->items_.push_front(Item<T> (item_it->data_, next_freq_it));
             Change_freq(item_it, freq_it, next_freq_it);
         }
-
-        //element with freq doesnt exist
-        FreqIt<T> new_freq_it = freqlist_.insert(next_freq_it, FreqNode<T>(freq_it->hits_ + 1));
-        new_freq_it->items_.push_front(Item<T>(item_it->data_, new_freq_it));
-        Change_freq(item_it, freq_it, new_freq_it);
+        else
+        {
+            //element with freq doesnt exist
+            FreqIt<T> new_freq_it = freqlist_.insert(next_freq_it, FreqNode<T>(freq_it->hits_ + 1));
+            new_freq_it->items_.push_front(Item<T>(item_it->data_, new_freq_it));
+            Change_freq(item_it, freq_it, new_freq_it);
+        }
     }
 
 
-    void Change_freq(ItemIt<T> &item_it, FreqIt<T> &cur, FreqIt<T> &fut)
+    void Change_freq(ItemIt<T> item_it, FreqIt<T> cur, FreqIt<T> fut)
     {
         hash_.erase(item_it->data_);
         hash_.insert({item_it->data_, fut->items_.begin()});
-        cur->items_.erase(item_it);
         if(cur->items_.empty())
             freqlist_.erase(cur);
     }

@@ -18,18 +18,19 @@ std::cin >> num_of_calls;
 
 int page;
 
-for (int i = 0; i < num_of_calls; ++i)
-{
-    std::cin >> page;
-    pages.push_back(page);
+ for (int i = 0; i < num_of_calls; ++i)
+ {
+     std::cin >> page;
+     pages.push_back(page);
 
-}
+     std::cout << i << "\n";
+ }
 
 
 Cache<int> cache(cap_of_cache);
 
 int hits;
-hits = cache.test_processing(pages, num_of_calls);
+hits = cache.test_processing(num_of_calls);
 
 std::cout << "Cache hits = " << hits << "\n";  
 
