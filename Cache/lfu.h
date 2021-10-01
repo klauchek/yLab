@@ -7,6 +7,7 @@
 #include <list>
 #include <iterator>
 #include <vector>
+#include <cassert>
 
 template <typename T>
 struct Item;
@@ -74,6 +75,7 @@ public:
         //if there's no such element in the map
         if (entry == hash_.end())
         {
+            
             //element wasn't found, insert new
             insert_item(elem);
             
@@ -88,13 +90,14 @@ public:
 
     int test_processing(int calls)
     {
+        int page;
         int hits = 0;
 
         for (int i = 0; i < calls; ++i)
-        {   
-            int page = 0;
-            std::cout << i <<"\n";
-            std::cin >> page; 
+        {
+            std::cin >> page;
+            assert(std::cin.good());
+            
             if (lookup(page))
                 ++hits;
         }
@@ -148,7 +151,7 @@ private:
         --freq_it;
 
         //element with freq + 1 already exists
-        if (next_freq_it->hits_ == freq_it->hits_ + 1)
+        if (next_freq_it->hits_ == (freq_it->hits_ + 1))
         {
             next_freq_it->items_.push_front(Item<T> (item_it->data_, next_freq_it));
             Change_freq(item_it, freq_it, next_freq_it);

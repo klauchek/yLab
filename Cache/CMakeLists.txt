@@ -1,13 +1,8 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(LFU_cache VERSION 0.1.0)
+cmake_minimum_required(VERSION 3.16.3)
+project(LFU_cache VERSION 1.0)
 
-include(CTest)
-enable_testing()
+set (COMPILER_SETTINGS -Wall -Wextra -O3)  
 
-add_executable(LFU_cache
+add_executable (LFU_cache 
 main.cpp
 lfu.h)
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
