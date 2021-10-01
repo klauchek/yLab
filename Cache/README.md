@@ -29,6 +29,8 @@ We use:
 - a doubly linked list as the frequency 
 
 The algorithm is shown in the pictures below.
+
+
  ![Screenshot](pics/1.png)
 
 
