@@ -52,6 +52,7 @@ struct Item
 };
 
 
+
 //! Class for LFU algorithm
 template <typename T>
 class Cache
@@ -81,7 +82,8 @@ public:
     //!         false if element doesn't exist in the cache
     //--------------------------------------------------------
 
-    bool lookup(const T elem)
+    template <typename F> 
+    bool lookup(const T elem, F slow_get_page)
     {
         //find element in the map
         HashIt entry = hash_.find(elem);
@@ -100,31 +102,6 @@ public:
         incr_frequency(entry->second);
         return true;
     }
-
-    //--------------------------------------------------------
-    //! Function for testing LFU algorithm
-    //! @param[in] calls   number of requests
-    //!
-    //! @return number of cache hits
-    //--------------------------------------------------------
-
-    int test_processing(int calls)
-    {
-        int page;
-        int hits = 0;
-
-        for (int i = 0; i < calls; ++i)
-        {
-            std::cin >> page;
-            assert(std::cin.good());
-            
-            if (lookup(page))
-                ++hits;
-        }
-
-        return hits;
-    }
-
     
 
 private:
@@ -214,5 +191,6 @@ private:
             freqlist_.erase(cur);
     }
 };
+
 
 #endif 
