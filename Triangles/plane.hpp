@@ -38,12 +38,11 @@ public:
 
     //! Calculate distance from point(vector) to plane dist = (r, n) - (r0, n) = (r, n) - D
 
-    bool DistToVec(const Vector& vector)
+    float DistToVec(const Vector& vector)
     {
         float dist = ScalarProduct(vector, norma) - D;
-        if (dist < 0)
-            return false;
-        return true;
+        
+        return dist;
     }
 
 };
