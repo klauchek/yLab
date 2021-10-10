@@ -94,31 +94,68 @@ public:
     Vector& operator -=(const Vector& vector)
     {
         for(int i = 0; i < 3; ++i)
-                coord_[i] = vector.getCoord(i);
+                coord_[i] -= vector.getCoord(i);
             return *this;
     }
 
-    Vector& operator *=(const Vector& vector)
+    Vector& operator *=(const float value)
     {
         for(int i = 0; i < 3; ++i)
-                coord_[i] *= vector.getCoord(i);
+                coord_[i] *= value;
             return *this;
     }
 
-    Vector& operator /=(const Vector& vector)
+    Vector& operator /=(const float value)
     {
         for(int i = 0; i < 3; ++i)
-                coord_[i] /= vector.getCoord(i);
+                coord_[i] /= value;
             return *this;
     }
+
+    //-------normalize vector
+
+double normal()
+{
+    return std::sqrt(coord_[0] * coord_[0] +
+                        coord_[1] * coord_[1] +
+                        coord_[2] * coord_[2]);
+}
+
+
+    Vector& normalize()
+{
+    double norm_vec = (*this).normal();
+
+    if (norm_vec == 0)
+        return *this;
+    else
+        (*this /= norm_vec);
+
+    return (*this);
+}
 
 };
+
+float ScalarProduct(const Vector& first, const Vector& second)
+{
+    return (first.getCoord(0) * second.getCoord(0) +
+            first.getCoord(1) * second.getCoord(1) +
+            first.getCoord(2) * second.getCoord(2));
+}
+
+Vector VecProduct(const Vector& first, const Vector& second)
+{
+    return Vector(first.getCoord(1) * second.getCoord(2) - second.getCoord(1) * first.getCoord(2),
+                    second.getCoord(0) * first.getCoord(2) - first.getCoord(0) * second.getCoord(2),
+                    first.getCoord(0) * second.getCoord(1) - second.getCoord(0) * first.getCoord(1));
+}
 
 /*Vector operator*(const double value, const Vector& vector)
 {   
     return vector * value;
 }
 */
+
 
 std::istream& operator>>(std::istream &in, Vector &vector)
 {
