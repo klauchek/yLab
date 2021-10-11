@@ -54,7 +54,7 @@ struct Item
 
 
 //! Class for LFU algorithm
-template <typename T>
+template <typename T, typename KeyT = int>
 class Cache
 {
 private:
@@ -64,9 +64,9 @@ private:
     //! List of FreqNodes
     std::list<FreqNode<T>> freqlist_;
 
-    //! typedef for iterator of std::unordered_map<T, ItemIt<T>>
-    std::unordered_map<T, ItemIt<T>> hash_;
-    using HashIt = typename std::unordered_map<T, ItemIt<T>>::iterator;
+    //! typedef for iterator of std::unordered_map<KeyT, ItemIt<T>>
+    std::unordered_map<KeyT, ItemIt<T>> hash_;
+    using HashIt = typename std::unordered_map<KeyT, ItemIt<T>>::iterator;
     
 
 public:
@@ -83,7 +83,7 @@ public:
     //--------------------------------------------------------
 
     template <typename F> 
-    bool lookup(const T elem, F slow_get_page)
+    bool lookup(const KeyT elem, F slow_get_page)
     {
         //find element in the map
         HashIt entry = hash_.find(elem);
@@ -93,7 +93,7 @@ public:
         {
 
             //element wasn't found, insert new
-            insert_item(elem);
+            insert_item(elem, slow_get_page);
             
             return false;
         }
@@ -127,8 +127,8 @@ private:
     //! Function for inserting an element into the cache
     //! @param[in] elem   element to insert
     //--------------------------------------------------------
-
-    void insert_item (const T elem)
+    template <typename F>
+    void insert_item (KeyT elem, F slow_get_page) //&
     {
         if (hash_.size() >= capacity)
             delete_lf_used();
@@ -138,7 +138,7 @@ private:
             freqlist_.push_front(FreqNode<T>());
         
         //adding the element to the freqlist and to the hashtable
-        freqlist_.front().items_.push_front((Item<T>(elem, freqlist_.begin())));
+        freqlist_.front().items_.push_front((Item<T>(slow_get_page(elem), freqlist_.begin())));
         hash_.insert({elem, freqlist_.front().items_.begin()});
 
     }
@@ -153,7 +153,7 @@ private:
         //if there was only one freqnode in the freqlist before inserting new element
         if (next(item_it->parent_) == freqlist_.end())
         {
-            freqlist_.push_back(FreqNode<T>(item_it->parent_->hits_ + 1));
+            freqlist_.emplace_back(item_it->parent_->hits_ + 1);
         }
 
         FreqIt<T> freq_it = item_it->parent_; 
