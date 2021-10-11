@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/mash/Code/ILab2/Cache/build",
-  "command": "/bin/x86_64-linux-gnu-g++-9    -g   -o CMakeFiles/LFU_cache.dir/main.cpp.o -c /home/mash/Code/ILab2/Cache/main.cpp",
-  "file": "/home/mash/Code/ILab2/Cache/main.cpp"
-}
-]
