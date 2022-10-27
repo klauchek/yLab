@@ -2,9 +2,10 @@
 #define __OCTREE__H__
 
 #include <array>
-#include <vector>
+#include <stack>
 #include <list>
 #include <utility>
+#include <memory>
 
 namespace octree{
 
@@ -16,8 +17,11 @@ class octree_node_t {
     geometry::vector_t right_border_{}, left_border_{};
     octree_node_t *parent_{};
 
+    // z y x
+    // 0 0 0 - part №0
+    // 0 0 1 - part №1
+    // 0 1 0 - part №2 etc.
     std::pair<geometry::vector_t, geometry::vector_t> define_borders(int part) {
-
         geometry::vector_t mid = (left_border_ + right_border_) / 2.0;
         geometry::vector_t new_left = left_border_;
         geometry::vector_t new_right = right_border_;
@@ -37,10 +41,36 @@ public:
 
     octree_node_t(std::list<Obj> &&objects_list, geometry::vector_t &&right, geometry::vector_t &&left, octree_node_t<Obj> *parent) :
                     parent_(parent), right_border_(std::move(right)), left_border_(std::move(left)), objects_(std::move(objects_list)) {}
+    
+    struct octree_node_deleter{
+        void operator()(octree_node_t *root){
+            if(root == nullptr)
+                return;
+            std::stack<octree_node_t *> stack;
+            stack.push(root);
+
+            std::stack<octree_node_t *> to_delete;
+
+            while(!stack.empty()) {
+                octree_node_t *cur = stack.top();
+                stack.pop();
+
+                to_delete.push(cur);
+                for(auto child : cur->children_)
+                    if(child)
+                        stack.push(child);
+            }
+            while(!to_delete.empty()) {
+                octree_node_t *cur = to_delete.top();
+                to_delete.pop();
+                delete cur;
+            }
+        }
+    };
 
     unsigned char where(const Obj &object) const{
         size_t num_vertex = object.get_nvertex(); //TODO: define for each object class
-        unsigned char part[num_vertex]{};
+        unsigned char part[3]{};
         for(size_t i = 0; i < num_vertex; ++i) {
             geometry::vector_t cur_vertex = object.get_vertex(i); //TODO: define for each object class
             geometry::vector_t middle_of_diag = (left_border_ + right_border_) / 2.0;
@@ -52,7 +82,10 @@ public:
         return part[0];
     }
     void sift() {
-        if(objects_.size() == 1) //+ diag < min_space //TODO
+        double diag = (left_border_.get_coord(0) - right_border_.get_coord(0)) * (left_border_.get_coord(0) - right_border_.get_coord(0)) +
+                    (left_border_.get_coord(1) - right_border_.get_coord(1)) * (left_border_.get_coord(1) - right_border_.get_coord(1)) +
+                    (left_border_.get_coord(2) - right_border_.get_coord(2)) * (left_border_.get_coord(2) - right_border_.get_coord(2));
+        if(objects_.size() == 1 || diag < (min_space * min_space))
             return;
         std::array<std::list<Obj>, 8> children_objs{};
         for(auto it = objects_.begin(), it_end = objects_.end(); it != it_end;) {
@@ -61,17 +94,16 @@ public:
                 ++it;
                 continue;
             }
-            auto tmp_it = std::next(it);
+            auto tmp_it = std::next(it); //bc of splice, but maybe it can be better
             children_objs[place].splice(children_objs[place].begin(), objects_, it, std::next(it));
             it = tmp_it;
-            std::cout << "im here" <<std::endl;
         }
         for(int i = 0; auto child_list : children_objs){
             if(child_list.empty()) {
                 ++i;
                 continue;
             }
-            std::pair<geometry::vector_t, geometry::vector_t> borders = define_borders(i); //TODO
+            std::pair<geometry::vector_t, geometry::vector_t> borders = define_borders(i);
             children_[i] = new octree_node_t(std::move(child_list), std::move(borders.first), std::move(borders.second), this);
             ++i;
         }
@@ -82,15 +114,11 @@ public:
     }
 };
 
-// class octree_t {
-
-//     octree_node_t *root_;
-
-// public:
-
-//     octree_t() : root_(new octree_node_t) {};
-
-// };
+template <typename Obj>
+struct octree_t {
+    std::unique_ptr<octree_node_t<Obj>, typename octree_node_t<Obj>::octree_node_deleter> root_;
+    octree_t(octree_node_t<Obj> *root) : root_(root) {};
+};
 
 
 }

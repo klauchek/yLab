@@ -34,17 +34,18 @@ int main() {
   //std::cout << triangle;
   //---------------------
   std::list<geometry::triangle_t> tr_list{triangl1, triangl2, triangl3};
-  octree::octree_node_t<geometry::triangle_t>* node = new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr);
-  for(auto obj : node->objects_)
+  //octree::octree_node_t<geometry::triangle_t>* node = new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr);
+  octree::octree_t<geometry::triangle_t> vosem_tree (new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr));
+  for(auto obj : vosem_tree.root_->objects_)
     std::cout << obj;
   std::cout << "----------\n";
-  node->sift();
-  for(auto obj : node->objects_)
+  vosem_tree.root_->sift();
+ for(auto obj : vosem_tree.root_->objects_)
     std::cout << obj;
-  for(auto obj : node->children_[0]->objects_) {
+  for(auto obj : vosem_tree.root_->children_[0]->objects_) {
     std::cout << obj;
   }
-  for(auto obj : node->children_[7]->objects_) {
+  for(auto obj : vosem_tree.root_->children_[7]->objects_) {
     std::cout << obj;
   }
 

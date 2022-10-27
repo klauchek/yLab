@@ -22,7 +22,7 @@ vector_t operator+(const vector_t &first, const vector_t &second) {
 }
 
 vector_t vector_t::operator/(double num) {
-    vector_t new_vec{coords_[0] / num, coords_[1] / num, coords_[3] / num};
+    vector_t new_vec{coords_[0] / num, coords_[1] / num, coords_[2] / num};
     return new_vec;
 }
 
