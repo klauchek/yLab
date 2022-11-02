@@ -14,10 +14,18 @@ unsigned char vector_t::relative_pos(const vector_t &other) const {
 	return res;
 }
 
+//TODO: think about [] 
 vector_t operator+(const vector_t &first, const vector_t &second) {
     vector_t new_vec{first.get_coord(0) + second.get_coord(0),
                     first.get_coord(1) + second.get_coord(1),
                     first.get_coord(2) + second.get_coord(2)};
+    return new_vec;
+}
+
+vector_t operator-(const vector_t &first, const vector_t &second) {
+    vector_t new_vec{first.get_coord(0) - second.get_coord(0),
+                    first.get_coord(1) - second.get_coord(1),
+                    first.get_coord(2) - second.get_coord(2)};
     return new_vec;
 }
 

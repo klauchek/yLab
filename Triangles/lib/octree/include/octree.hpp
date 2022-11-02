@@ -70,7 +70,7 @@ public:
 
     unsigned char where(const Obj &object) const{
         size_t num_vertex = object.get_nvertex(); //TODO: define for each object class
-        unsigned char part[3]{};
+        unsigned char part[3]{}; //TODO there should be num of vertex, not 3
         for(size_t i = 0; i < num_vertex; ++i) {
             geometry::vector_t cur_vertex = object.get_vertex(i); //TODO: define for each object class
             geometry::vector_t middle_of_diag = (left_border_ + right_border_) / 2.0;
