@@ -59,9 +59,9 @@ int main() {
   /// ---------TESTING 3D INTRSECTION---------------///
   /////////////////////////////////////////////////////
 
-  double det2 = calc_det(vec4, vec5, vec6);
-  double det3 = calc_det(vec4, vec5, vec6, vec7);
-  double det3_1 = calc_det(vec4, vec5, vec6, vec8);
+  double det2 = intersection::calc_det(vec4, vec5, vec6);
+  double det3 = intersection::calc_det(vec4, vec5, vec6, vec7);
+  double det3_1 = intersection::calc_det(vec4, vec5, vec6, vec8);
   std::cout << "det2: " << det2 << ", det3: " << det3 << ", det3_1: " << det3_1 <<  std::endl;
 
 }
