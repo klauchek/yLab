@@ -16,6 +16,7 @@ public:
 
     vector_t get_vertex(int num) const;
     size_t get_nvertex() const;
+    void circular_permutation(std::array<int, 3> &res, int sign);
     void set_p(std::array<int, 3> &res, int sum);
     void swap_qr();
 };

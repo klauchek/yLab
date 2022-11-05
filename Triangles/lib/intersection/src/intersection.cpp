@@ -61,7 +61,7 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
     for(size_t i = 0; i < 3; ++i) {
         if(calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]) > 0)
             res_arr[i] = 1;
-        if(calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]) < 0)
+        else if(calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]) < 0)
             res_arr[i] = -1;
         else
             res_arr[i] = 0;
@@ -89,17 +89,26 @@ bool intersection2D() {
 bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
     std::array<int, 3> res_1 = check_relative_pos(tr_2, tr_1);
     int sum_1 = std::accumulate(res_1.begin(), res_1.end(), 0);
+    std::cout << "sum 1: " << sum_1 << std::endl;
     if(!is_intersec_possible(sum_1))
         return false;
 
     std::array<int, 3> res_2 = check_relative_pos(tr_1, tr_2);
     int sum_2 = std::accumulate(res_2.begin(), res_2.end(), 0);
+    std::cout << "sum 2: " << sum_2 << std::endl;
     if(!is_intersec_possible(sum_2))
         return false;
     
     sort_triangles(tr_1, tr_2, res_1, sum_1);
 
-    ///to be continued
+    if((sum_1 == 2 || sum_2 == 2) || (sum_1 == -2 || sum_2 == -2))
+        return true;
+
+    std::array<geometry::vector_t, 3> vertices_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)};
+    std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
+    if(calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]) <= 0 && calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]) <= 0)
+        return true;
+    return false;
 }
 
 void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std::array<int, 3> &res_1, int sum_1) {

@@ -9,27 +9,25 @@ size_t triangle_t::get_nvertex() const {
     return vertices_.size();
 }
 
+void triangle_t::circular_permutation(std::array<int, 3> &res, int sign){
+    if(res[0] == sign)
+        return;
+    std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
+    if(res[1] == sign)
+        std::swap(vertices_[0], vertices_[1]);
+    else
+        std::swap(vertices_[1], vertices_[2]);
+}
 //res = [p q r] --> 
 void triangle_t::set_p(std::array<int, 3> &res, int sum) {
-    if(sum == 2) {
-        if(res[0] == -1)
-            return;
-        std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
-        if(res[1] == -1)
-            std::swap(vertices_[0], vertices_[1]);
-        else
-            std::swap(vertices_[1], vertices_[2]);
+    if(sum == 1)
+        circular_permutation(res, -1);
+    if(sum == -1)
+        circular_permutation(res, 1);
+    if(sum == 2 || sum == -2) {
+        std::cout << "here sum 2";
+        circular_permutation(res, 0);
     }
-    if(sum == -2) {
-        if(res[0] == 1)
-            return;
-        std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
-        if(res[1] == 1)
-            std::swap(vertices_[0], vertices_[1]);
-        else
-            std::swap(vertices_[1], vertices_[2]);
-    }
-    //! TODO   ОБОБЩИТЬ
 }
 void triangle_t::swap_qr() {
     std::swap(vertices_[1], vertices_[2]);
