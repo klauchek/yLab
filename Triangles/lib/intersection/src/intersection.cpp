@@ -32,6 +32,8 @@ std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometr
 
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
     std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3);
+    std::cout << m[0] << "  " << m[1] << std::endl 
+              << m[2] << "  " << m[3] << std::endl;
     return m[0] * m[3] - m[1] * m[2];
 }
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4) {
@@ -59,9 +61,10 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
     std::array<int, 3> res_arr;
     for(size_t i = 0; i < 3; ++i) {
-        if(calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]) > 0)
+        double det = calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]);
+        if(det > 0)
             res_arr[i] = 1;
-        else if(calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]) < 0)
+        else if(det < 0)
             res_arr[i] = -1;
         else
             res_arr[i] = 0;
@@ -69,36 +72,26 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
     return res_arr;
 }
 
-bool is_intersec_possible(int sum) {
-    if(sum == 3 || sum == -3) {
-        std::cout << "No intersection possible!" << std::endl;
-        return false;
-    }
-    if(sum == 0) {
-        std::cout << "We have 2D intersection!" << std::endl;
-        return intersection2D(); ///??  returns true or false
-    }
-    return true;
-}
-
-bool intersection2D() {
-    return true;
-}
-
+//-----------------------------------------------------//
+//------------------ 3D INTERSECTION ------------------//
+//---------------------------------------------------- //
 //const qualifiers??
 bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
     std::array<int, 3> res_1 = check_relative_pos(tr_2, tr_1);
     int sum_1 = std::accumulate(res_1.begin(), res_1.end(), 0);
-    std::cout << "sum 1: " << sum_1 << std::endl;
-    if(!is_intersec_possible(sum_1))
-        return false;
 
     std::array<int, 3> res_2 = check_relative_pos(tr_1, tr_2);
     int sum_2 = std::accumulate(res_2.begin(), res_2.end(), 0);
-    std::cout << "sum 2: " << sum_2 << std::endl;
-    if(!is_intersec_possible(sum_2))
+
+    if((sum_1 == 3 || sum_1 == -3) || (sum_2 == 3 || sum_2 == -3)) {
+        std::cout << "No intersection possible!" << std::endl;
         return false;
-    
+    }
+    if(sum_1 == 0 || sum_2 == 0) {
+        std::cout << "We have 2D intersection!" << std::endl;
+        return intersection2D(tr_1, tr_2);
+    }
+
     sort_triangles(tr_1, tr_2, res_1, sum_1);
 
     if((sum_1 == 2 || sum_2 == 2) || (sum_1 == -2 || sum_2 == -2))
@@ -118,6 +111,99 @@ void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std:
         tr_2.swap_qr();
 }
 
+//-----------------------------------------------------//
+//------------------ 2D INTERSECTION ------------------//
+//---------------------------------------------------- //
+bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
+    tr_1.counter_clock();
+    tr_2.counter_clock();
 
+    geometry::vector_t p_1 = tr_1.get_vertex(0);
+    std::array<int, 3> res = check_relative_pos(p_1, tr_2);
+
+    std::cout << "res: " << res[0] << ", " << res[1] << ", " << res[2] << std::endl;
+    if(intersec_first_step2D(res))
+        return true;
+    
+    //other cases - moving p_1 to ++- or to +-- part with circular permutation of T2
+    // + means det >= 0; - means det < 0;
+    // [p1, p2, q2]
+    // [p1, q2, r2]
+    // [p1, r2, p2]
+
+    if(determine_region(p_1, res, tr_2)) {
+        std::cout << "We go to R1!" << std::endl;
+    }
+    else
+        std::cout << "We go to R2!" << std::endl;
+
+    return false;
+}
+
+std::array<int, 3> check_relative_pos(const geometry::vector_t &p_1, const geometry::triangle_t &tr_2) {
+    std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
+    std::array<int, 3> res_arr;
+
+    for(size_t i = 0; i < 3; ++i) {
+        double det = calc_det(p_1, vertices_2[i], vertices_2[(i + 1) % 3]);
+        if(det > 0)
+            res_arr[i] = 1;
+        else if(det < 0)
+            res_arr[i] = -1;
+        else
+            res_arr[i] = 0;
+    }
+    return res_arr;
+}
+
+//const???
+bool intersec_first_step2D(std::array<int, 3> &res) {
+    int num_zeros = std::count(res.begin(), res.end(), 0);
+    int num_ones = std::count(res.begin(), res.end(), 1);
+    if(num_ones == 3) {
+        std::cout << "p1 is in T2!" << std::endl;
+        return true;
+    }
+    if(num_zeros == 2) {
+        std::cout << "p1 is on the vertex of T2!" << std::endl;
+        return true;
+    }
+    if(num_zeros == 1 && num_ones == 2) {
+        std::cout << "p1 is on the edge of T2!" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+// --- check if p` is in ++- part +--
+namespace {
+bool check_R1(std::array<int, 3> &res) {
+    if(res[0] >= 0 && res[1] >= 0 && res[2] < 0)
+        return true;
+    return false;
+}
+bool check_R2(std::array<int, 3> &res) {
+    if(res[0] >= 0 && res[1] < 0 && res[2] < 0)
+        return true;
+    return false;
+}
+}
+
+bool determine_region(const geometry::vector_t &p_1, std::array<int, 3> &res, geometry::triangle_t &tr_2) {
+    bool R1 = check_R1(res);
+    bool R2 = check_R2(res);
+    while(R1 != 1 && R2 != 1) {
+        std::cout << "im here" << std::endl;
+        tr_2.circular_permutation();
+        std::cout << tr_2;
+        res = check_relative_pos(p_1, tr_2);
+        for(auto v : res)
+            std::cout << v << " ";
+        std::cout << std::endl;
+        R1 = check_R1(res);
+        R2 = check_R2(res);   
+    }
+    return R1;
+}
 
 } //namespace intersection

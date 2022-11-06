@@ -2,6 +2,7 @@
 #define __TRIANGLE__H__
 
 #include "vector.hpp"
+#include <vector>
 
 namespace geometry {
 
@@ -17,6 +18,8 @@ public:
     vector_t get_vertex(int num) const;
     size_t get_nvertex() const;
     void circular_permutation(std::array<int, 3> &res, int sign);
+    void circular_permutation();
+    void counter_clock();
     void set_p(std::array<int, 3> &res, int sum);
     void swap_qr();
 };
