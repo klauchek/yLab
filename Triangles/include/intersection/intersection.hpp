@@ -1,8 +1,8 @@
 #ifndef __INTERSEC__H__
 #define __INTERSEC__H__
 
-#include "../../primitives/include/triangle.hpp"
-#include "../../primitives/include/vector.hpp"
+#include "primitives/triangle.hpp"
+#include "primitives/vector.hpp"
 #include <vector>
 #include <algorithm>
 #include <numeric>

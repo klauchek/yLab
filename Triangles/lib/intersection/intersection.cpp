@@ -1,6 +1,8 @@
-#include "../include/intersection.hpp"
+#include "intersection.hpp"
 
 namespace intersection {
+
+// TODO: make common and remove from triangle
 
 //---------- DETERMINANTS CALCULATION ------------//
 //             |a_x  a_y  1|
@@ -205,5 +207,16 @@ bool determine_region(const geometry::vector_t &p_1, std::array<int, 3> &res, ge
     }
     return R1;
 }
+
+// bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
+//     std::array<geometry::vector_t, 3> vertices_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)};
+//     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
+
+    
+// }
+
+// bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
+
+// }
 
 } //namespace intersection

@@ -1,7 +1,7 @@
 #include "vector.hpp"
 #include "triangle.hpp"
-#include "../../octree/include/octree.hpp"
-#include "../../intersection/include/intersection.hpp"
+#include "octree.hpp"
+#include "intersection.hpp"
 
 int main() {
   /////////////////////////////////////////////////////
