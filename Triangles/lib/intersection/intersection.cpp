@@ -134,10 +134,11 @@ bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
     // [p1, r2, p2]
 
     if(determine_region(p_1, res, tr_2)) {
-        std::cout << "We go to R1!" << std::endl;
+        std::cout << "We go to R1! - edge intersection" << std::endl;
+        return solution_R1(tr_1, tr_2);
     }
     else
-        std::cout << "We go to R2!" << std::endl;
+        std::cout << "We go to R2! - vertex intersection" << std::endl;
 
     return false;
 }
@@ -208,12 +209,34 @@ bool determine_region(const geometry::vector_t &p_1, std::array<int, 3> &res, ge
     return R1;
 }
 
-// bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
-//     std::array<geometry::vector_t, 3> vertices_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)};
-//     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
+bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
+    std::array<geometry::vector_t, 3> vrts_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)}; // p1, q1, r1
+    std::array<geometry::vector_t, 3> vrts_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)}; // p2, q2, r2
 
-    
-// }
+    if(calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
+        if(calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) >= 0) {
+            if(calc_det(vrts_1[0], vrts_1[1], vrts_2[2]) >= 0)
+                return 1;
+        }
+        else {
+            if(calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0) {
+                if(calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) >= 0)
+                    return 1;
+            }
+        }
+    }
+    else {
+        if(calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
+            if(calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
+                if(calc_det(vrts_1[0], vrts_1[2], vrts_2[2]) >= 0)
+                    return 1;
+                if(calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0)
+                    return 1;
+            }
+        }
+    }
+    return 0;    
+}
 
 // bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
 

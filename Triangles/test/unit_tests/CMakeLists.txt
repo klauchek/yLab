@@ -20,7 +20,7 @@ set(SRCS
 set (EXEC_FILE "tests_runner")
 
 add_executable(${EXEC_FILE} ${SRCS})
-target_include_directories(${EXEC_FILE} PRIVATE ${CMAKE_SOURCE_DIR}/include) #${CMAKE_SOURCE_DIR} is dir yLab/Triangles
+target_include_directories(${EXEC_FILE} PRIVATE ${CMAKE_SOURCE_DIR}/include) #${CMAKE_SOURCE_DIR} is yLab/Triangles
 target_link_libraries(${EXEC_FILE} GTest::gtest_main)
 
 include(GoogleTest)
