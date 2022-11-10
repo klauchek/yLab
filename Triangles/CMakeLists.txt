@@ -28,5 +28,7 @@ target_include_directories(${EXEC_FILE} PRIVATE ${CMAKE_BINARY_DIR})
 
 option(WITH_TESTS OFF)
 if (WITH_TESTS)
+  message("building with google tests")
+  enable_testing()
   add_subdirectory(test)
 endif()
