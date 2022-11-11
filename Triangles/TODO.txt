@@ -1,5 +1,7 @@
 1. common.hpp, common.cpp - for double_cmp, determinants calculating
 2. inheritance for geometry objects
-3. 2d intersection [in process]
+3. 2d intersection [done, but infinite loop when trinagle is a point, need fix]
 4. think about <<
 5. value template for number of vertex
+6. const, static, namespaces
+7. final or virtual dtor for classes
