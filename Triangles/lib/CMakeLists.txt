@@ -1,4 +1,5 @@
 set(LIBLIST
+  common
   intersection
   primitives
 )

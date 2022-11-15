@@ -4,49 +4,7 @@ namespace intersection {
 
 // TODO: make common and remove from triangle
 
-//---------- DETERMINANTS CALCULATION ------------//
-//             |a_x  a_y  1|
-// [a, b, c]:= |b_x  b_y  1| = |a_x - c_x  a_y - c_y|
-//             |c_x  c_y  1|   |b_x - c_x  b_y - c_y|
-//
-//                |a_x  a_y  a_z  1|   |a_x - d_x  a_y - d_y  a_z - d_z|
-// [a, b, c, d]:= |b_x  b_y  b_z  1| = |b_x - d_x  b_y - d_y  b_z - d_z|
-//                |c_x  c_y  c_z  1|   |c_x - d_x  c_y - d_y  c_z - d_z|
-//                |d_x  d_y  d_z  1|
-//------------------------------------------------//
 
-std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
-    geometry::vector_t new_vec_1 = vec_1 - vec_3;
-    geometry::vector_t new_vec_2 = vec_2 - vec_3;
-    std::vector<double> res{new_vec_1[0], new_vec_1[1],
-                            new_vec_2[0], new_vec_2[1]};
-    return res;
-}
-std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4) {
-    geometry::vector_t new_vec_1 = vec_1 - vec_4;
-    geometry::vector_t new_vec_2 = vec_2 - vec_4;
-    geometry::vector_t new_vec_3 = vec_3 - vec_4;
-    std::vector<double> res{new_vec_1[0], new_vec_1[1], new_vec_1[2],
-                            new_vec_2[0], new_vec_2[1], new_vec_2[2],
-                            new_vec_3[0], new_vec_3[1], new_vec_3[2]};
-    return res;
-}
-
-double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
-    std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3);
-    std::cout << m[0] << "  " << m[1] << std::endl 
-              << m[2] << "  " << m[3] << std::endl;
-    return m[0] * m[3] - m[1] * m[2];
-}
-double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4) {
-    std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3, vec_4);
-    return m[0] * m[1 * 3 + 1] * m[2 * 3 + 2] +
-        m[1] * m[1 * 3 + 2] * m[2 * 3] +
-        m[2] * m[1 * 3]     * m[2 * 3 + 1] -
-        m[2] * m[1 * 3 + 1] * m[2 * 3] -
-        m[1] * m[1 * 3]     * m[2 * 3 + 2] -
-        m[0] * m[1 * 3 + 2] * m[2 * 3 + 1];
-}
 
 //------------CHECKING SIGNS OF DETERMINANTS-----------//
 // ... to determine if intersection is possible
@@ -63,7 +21,7 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
     std::array<int, 3> res_arr;
     for(size_t i = 0; i < 3; ++i) {
-        double det = calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]);
+        double det = common::calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]);
         if(det > 0)
             res_arr[i] = 1;
         else if(det < 0)
@@ -71,6 +29,9 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
         else
             res_arr[i] = 0;
     }
+    for(auto u : res_arr)
+        std::cout << u << " ";
+    std::cout << std::endl; 
     return res_arr;
 }
 
@@ -90,6 +51,7 @@ bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
         return false;
     }
     if(sum_1 == 0 || sum_2 == 0) {
+        std::cout << "sum_1: " << sum_1 << " sum 2: " << sum_2 << std::endl;
         std::cout << "We have 2D intersection!" << std::endl;
         return intersection2D(tr_1, tr_2);
     }
@@ -101,14 +63,14 @@ bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
 
     std::array<geometry::vector_t, 3> vertices_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)};
     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
-    if(calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]) <= 0 && calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]) <= 0)
+    if(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]) <= 0 && common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]) <= 0)
         return true;
     return false;
 }
 
 void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std::array<int, 3> &res_1, int sum_1) {
     tr_1.set_p(res_1, sum_1);
-    int sign = (calc_det(tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2), tr_1.get_vertex(0)) > 0) ? 1 : -1;
+    int sign = (common::calc_det(tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2), tr_1.get_vertex(0)) > 0) ? 1 : -1;
     if(sign == -1)
         tr_2.swap_qr();
 }
@@ -117,10 +79,13 @@ void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std:
 //------------------ 2D INTERSECTION ------------------//
 //---------------------------------------------------- //
 bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
+    std::cout << "tr_2: " << tr_2 << std::endl;
     tr_1.counter_clock();
     tr_2.counter_clock();
 
     geometry::vector_t p_1 = tr_1.get_vertex(0);
+    std::cout << "P1: " << p_1 << std::endl;
+    std::cout << "tr_2: " << tr_2 << std::endl;
     std::array<int, 3> res = check_relative_pos(p_1, tr_2);
 
     std::cout << "res: " << res[0] << ", " << res[1] << ", " << res[2] << std::endl;
@@ -150,10 +115,13 @@ std::array<int, 3> check_relative_pos(const geometry::vector_t &p_1, const geome
     std::array<int, 3> res_arr;
 
     for(size_t i = 0; i < 3; ++i) {
-        double det = calc_det(p_1, vertices_2[i], vertices_2[(i + 1) % 3]);
-        if(det > 0)
+        double det = common::calc_det(p_1, vertices_2[i], vertices_2[(i + 1) % 3]);
+        std::cout << "det = " << det << std::endl;
+        double res_cmp = geometry::dbl_cmp(det, 0);
+        std::cout << "res_cmp = " << res_cmp << std::endl;
+        if(res_cmp > 0)
             res_arr[i] = 1;
-        else if(det < 0)
+        else if(res_cmp < 0)
             res_arr[i] = -1;
         else
             res_arr[i] = 0;
@@ -176,6 +144,9 @@ bool intersec_first_step2D(std::array<int, 3> &res) {
     if(num_zeros == 1 && num_ones == 2) {
         std::cout << "p1 is on the edge of T2!" << std::endl;
         return true;
+    }
+    if(num_zeros == 3) {
+        //
     }
     return false;
 }
@@ -215,24 +186,24 @@ bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
     std::array<geometry::vector_t, 3> vrts_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)}; // p1, q1, r1
     std::array<geometry::vector_t, 3> vrts_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)}; // p2, q2, r2
 
-    if(calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
-        if(calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) >= 0) {
-            if(calc_det(vrts_1[0], vrts_1[1], vrts_2[2]) >= 0)
+    if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
+        if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) >= 0) {
+            if(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]) >= 0)
                 return 1;
         }
         else {
-            if(calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0) {
-                if(calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) >= 0)
+            if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0) {
+                if(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) >= 0)
                     return 1;
             }
         }
     }
     else {
-        if(calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
-            if(calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
-                if(calc_det(vrts_1[0], vrts_1[2], vrts_2[2]) >= 0)
+        if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
+            if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
+                if(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]) >= 0)
                     return 1;
-                if(calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0)
+                if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0)
                     return 1;
             }
         }
@@ -244,37 +215,37 @@ bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
     std::array<geometry::vector_t, 3> vrts_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)}; // p1, q1, r1
     std::array<geometry::vector_t, 3> vrts_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)}; // p2, q2, r2
 
-    if(calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
-        if(calc_det(vrts_2[2], vrts_2[1], vrts_1[1]) <= 0) {
-            if(calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) > 0) {
-                if(calc_det(vrts_1[0], vrts_2[1], vrts_1[1]) <= 0)
+    if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
+        if(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[1]) <= 0) {
+            if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) > 0) {
+                if(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]) <= 0)
                     return 1;
             }
             else {
-                if(calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
-                    if(calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0)
+                if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
+                    if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0)
                         return 1;
                 }
             }
         }
         else {
-            if(calc_det(vrts_1[0], vrts_2[1], vrts_1[1]) <= 0) {
-                if(calc_det(vrts_2[2], vrts_2[1], vrts_1[2]) <= 0) {
-                    if(calc_det(vrts_1[1], vrts_1[2], vrts_2[1]) >= 0)
+            if(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]) <= 0) {
+                if(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[2]) <= 0) {
+                    if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]) >= 0)
                         return 1;
                 }
             }
         }
     }
     else {
-        if(calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
-            if(calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0) {
-                if(calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0)
+        if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
+            if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0) {
+                if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0)
                     return 1;
             }
             else {
-                if(calc_det(vrts_1[1], vrts_1[2], vrts_2[1]) >= 0) {
-                    if(calc_det(vrts_2[2], vrts_1[2], vrts_2[1]) >= 0)
+                if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]) >= 0) {
+                    if(common::calc_det(vrts_2[2], vrts_1[2], vrts_2[1]) >= 0)
                         return 1;
                 }
             }

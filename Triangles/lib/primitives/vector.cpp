@@ -6,14 +6,23 @@ unsigned char vector_t::relative_pos(const vector_t &other) const {
 	unsigned char res = 0;
 	for(int i = 0; i < 3; ++i) {
 		double cur_coord = other[i];
-		if(cur_coord == coords_[i]) //TODO: double cmp
+		if(dbl_cmp(cur_coord, coords_[i]) == 0) //TODO: double cmp
 			return UCHAR_MAX;
-		if(coords_[i] > cur_coord)
+		if(dbl_cmp(coords_[i], cur_coord) > 0)
 			res |= (1 << i);
 	}
 	return res;
 }
 
+int dbl_cmp(const double x, const double y) {
+    const double epsilon = 10E-10;
+
+    if (std::abs(x - y) < epsilon)
+        return 0;
+    if (x - y > 0)
+        return 1;
+    return -1;
+}
 //TODO: think about [] 
 vector_t operator+(const vector_t &first, const vector_t &second) {
     vector_t new_vec{first.get_coord(0) + second.get_coord(0),

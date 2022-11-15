@@ -2,6 +2,7 @@
 #define __TRIANGLE__H__
 
 #include "vector.hpp"
+#include "common/common.hpp"
 #include <vector>
 
 namespace geometry {

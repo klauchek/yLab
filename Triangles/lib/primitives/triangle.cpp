@@ -42,27 +42,12 @@ void triangle_t::swap_qr() {
 //---------- FUNCTIONS FOR 2D INTERSECTION ------//
 //-----------------------------------------------//
 
-namespace {
-std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
-    geometry::vector_t new_vec_1 = vec_1 - vec_3;
-    geometry::vector_t new_vec_2 = vec_2 - vec_3;
-    std::vector<double> res{new_vec_1[0], new_vec_1[1],
-                            new_vec_2[0], new_vec_2[1]};
-    return res;
-}
-
-double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
-    std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3);
-    return m[0] * m[3] - m[1] * m[2];
-}
-}
-
 void triangle_t::counter_clock() {
-    double det = calc_det(vertices_[0], vertices_[1], vertices_[2]);
+    double det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
     if(det < 0)
         swap_qr();
     std::cout << "Det before" << det << std::endl;
-    det = calc_det(vertices_[0], vertices_[1], vertices_[2]);
+    det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
     std::cout << "Det after" << det << std::endl;
 
 }
