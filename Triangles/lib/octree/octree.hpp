@@ -7,6 +7,8 @@
 #include <utility>
 #include <memory>
 
+#include "vector.hpp"
+
 namespace octree{
 
 const double min_space = 0.1;
@@ -85,7 +87,7 @@ public:
         double diag = (left_border_.get_coord(0) - right_border_.get_coord(0)) * (left_border_.get_coord(0) - right_border_.get_coord(0)) +
                     (left_border_.get_coord(1) - right_border_.get_coord(1)) * (left_border_.get_coord(1) - right_border_.get_coord(1)) +
                     (left_border_.get_coord(2) - right_border_.get_coord(2)) * (left_border_.get_coord(2) - right_border_.get_coord(2));
-        if(objects_.size() == 1 || diag < (min_space * min_space))
+        if(objects_.size() == 1 || cmp::dbl_cmp(diag, (min_space * min_space)) < 0)
             return;
         std::array<std::list<Obj>, 8> children_objs{};
         for(auto it = objects_.begin(), it_end = objects_.end(); it != it_end;) {

@@ -70,13 +70,13 @@ int main() {
   //intersection
 
   //1 tr
-  struct geometry::vector_t vec12{1.1, 0, 0};
-  struct geometry::vector_t vec13{1.5, 1, 0};
-  struct geometry::vector_t vec14{-1, 0, 0};
+  struct geometry::vector_t vec12{0, 0, 0};
+  struct geometry::vector_t vec13{0, 4, 0};
+  struct geometry::vector_t vec14{3, 0, 0};
   //2 tr
-  struct geometry::vector_t vec15{0.1, 0.4, 0};
-  struct geometry::vector_t vec16{0.2, 0.4, 0};
-  struct geometry::vector_t vec17{1.1, 0, 1};
+  struct geometry::vector_t vec15{0, 0, 0};
+  struct geometry::vector_t vec16{0.86, 0.31, 0};
+  struct geometry::vector_t vec17{3.79, 2.56, 0};
 
   geometry::triangle_t triangl_1(vec12, vec13, vec14);
   geometry::triangle_t triangl_2(vec15, vec17, vec16);

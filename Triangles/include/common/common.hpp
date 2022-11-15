@@ -11,7 +11,7 @@ std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometr
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3);
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4);
 
-}
+} //namespace common
 
 
 #endif //__COMMON__H__

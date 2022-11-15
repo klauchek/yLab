@@ -14,14 +14,15 @@ target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
 set(SRCS
   runner.cpp
-
+  test_intersection3D_normal.cpp
+  test_intersection2D_normal.cpp
 )
-
 set (EXEC_FILE "tests_runner")
 
 add_executable(${EXEC_FILE} ${SRCS})
-target_include_directories(${EXEC_FILE} PRIVATE ${CMAKE_SOURCE_DIR}/include) #${CMAKE_SOURCE_DIR} is yLab/Triangles
+
 target_link_libraries(${EXEC_FILE} GTest::gtest_main)
+target_link_libraries(${EXEC_FILE} ${LIBLIST})
 
 include(GoogleTest)
 gtest_discover_tests(${EXEC_FILE})

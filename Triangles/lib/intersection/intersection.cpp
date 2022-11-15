@@ -22,7 +22,7 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
     std::array<int, 3> res_arr;
     for(size_t i = 0; i < 3; ++i) {
         double det = common::calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]);
-        if(det > 0)
+        if(cmp::dbl_cmp(det, 0.0) > 0)
             res_arr[i] = 1;
         else if(det < 0)
             res_arr[i] = -1;
@@ -63,14 +63,15 @@ bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
 
     std::array<geometry::vector_t, 3> vertices_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)};
     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
-    if(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]) <= 0 && common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]) <= 0)
+    if(cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]), 0.0) <= 0 
+        && cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0) <= 0)
         return true;
     return false;
 }
 
 void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std::array<int, 3> &res_1, int sum_1) {
     tr_1.set_p(res_1, sum_1);
-    int sign = (common::calc_det(tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2), tr_1.get_vertex(0)) > 0) ? 1 : -1;
+    int sign = (cmp::dbl_cmp(common::calc_det(tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2), tr_1.get_vertex(0)), 0.0) > 0) ? 1 : -1;
     if(sign == -1)
         tr_2.swap_qr();
 }
@@ -117,11 +118,11 @@ std::array<int, 3> check_relative_pos(const geometry::vector_t &p_1, const geome
     for(size_t i = 0; i < 3; ++i) {
         double det = common::calc_det(p_1, vertices_2[i], vertices_2[(i + 1) % 3]);
         std::cout << "det = " << det << std::endl;
-        double res_cmp = geometry::dbl_cmp(det, 0);
+        double res_cmp = cmp::dbl_cmp(det, 0);
         std::cout << "res_cmp = " << res_cmp << std::endl;
-        if(res_cmp > 0)
+        if(cmp::dbl_cmp(res_cmp, 0.0) > 0)
             res_arr[i] = 1;
-        else if(res_cmp < 0)
+        else if(cmp::dbl_cmp(res_cmp, 0.0) < 0)
             res_arr[i] = -1;
         else
             res_arr[i] = 0;
@@ -186,24 +187,24 @@ bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
     std::array<geometry::vector_t, 3> vrts_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)}; // p1, q1, r1
     std::array<geometry::vector_t, 3> vrts_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)}; // p2, q2, r2
 
-    if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
-        if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) >= 0) {
-            if(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]) >= 0)
+    if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
+        if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]), 0.0) >= 0)
                 return 1;
         }
         else {
-            if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0) {
-                if(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) >= 0)
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]), 0.0) >= 0) {
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]), 0.0) >= 0)
                     return 1;
             }
         }
     }
     else {
-        if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
-            if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
-                if(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]) >= 0)
+        if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]), 0.0) >= 0)
                     return 1;
-                if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0)
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0)
                     return 1;
             }
         }
@@ -215,37 +216,37 @@ bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
     std::array<geometry::vector_t, 3> vrts_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)}; // p1, q1, r1
     std::array<geometry::vector_t, 3> vrts_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)}; // p2, q2, r2
 
-    if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]) >= 0) {
-        if(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[1]) <= 0) {
-            if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]) > 0) {
-                if(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]) <= 0)
+    if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
+        if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[1]), 0.0) <= 0) {
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]), 0.0) > 0) {
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]), 0.0) <= 0)
                     return 1;
             }
             else {
-                if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0) {
-                    if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) >= 0)
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
+                    if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]), 0.0) >= 0)
                         return 1;
                 }
             }
         }
         else {
-            if(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]) <= 0) {
-                if(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[2]) <= 0) {
-                    if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]) >= 0)
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]), 0.0) <= 0) {
+                if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[2]), 0.0) <= 0) {
+                    if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]), 0.0) >= 0)
                         return 1;
                 }
             }
         }
     }
     else {
-        if(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]) >= 0) {
-            if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]) >= 0) {
-                if(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]) >= 0)
+        if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0)
                     return 1;
             }
             else {
-                if(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]) >= 0) {
-                    if(common::calc_det(vrts_2[2], vrts_1[2], vrts_2[1]) >= 0)
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]), 0.0) >= 0) {
+                    if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_1[2], vrts_2[1]), 0.0) >= 0)
                         return 1;
                 }
             }

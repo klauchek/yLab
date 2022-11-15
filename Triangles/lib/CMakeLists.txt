@@ -1,6 +1,6 @@
 set(LIBLIST
-  common
   intersection
+  common
   primitives
 )
 

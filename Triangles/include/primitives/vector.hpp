@@ -29,21 +29,13 @@ vector_t operator+(const vector_t &first, const vector_t &second);
 vector_t operator-(const vector_t &first, const vector_t &second);
 
 std::ostream& operator<<(std::ostream &out, const vector_t &vec);
+}
+
+namespace cmp {
 
 int dbl_cmp(const double x, const double y);
-// struct dbl_cmp {
-//     int operator()(const double x, const double y) {
-//         const double epsilon = 10E-10;
 
-//         if (std::abs(x - y) < epsilon)
-//             return 0;
-//         if (x - y > 0)
-//             return 1;
-//         return -1;
-//     }
-    
-// };
+}//namespace cmp
 
-}
 
 #endif //__VECTOR__H__

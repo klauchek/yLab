@@ -21,6 +21,6 @@ bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
 bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
 
 
-} //nemaspace intersection
+} //namespace intersection
 
 #endif //__INTERSEC__H__

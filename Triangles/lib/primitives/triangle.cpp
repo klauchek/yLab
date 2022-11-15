@@ -44,11 +44,11 @@ void triangle_t::swap_qr() {
 
 void triangle_t::counter_clock() {
     double det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
-    if(det < 0)
+    if(cmp::dbl_cmp(det, 0.0) < 0)
         swap_qr();
-    std::cout << "Det before" << det << std::endl;
-    det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
-    std::cout << "Det after" << det << std::endl;
+    std::cout << "Det before" << det << std::endl;                     //
+    det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);  //remove after debug
+    std::cout << "Det after" << det << std::endl;                      //
 
 }
 
