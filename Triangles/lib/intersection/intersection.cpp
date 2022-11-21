@@ -22,9 +22,10 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
     std::array<int, 3> res_arr;
     for(size_t i = 0; i < 3; ++i) {
         double det = common::calc_det(vertices_1[0], vertices_1[1], vertices_1[2], vertices_2[i]);
-        if(cmp::dbl_cmp(det, 0.0) > 0)
+        int sign = cmp::dbl_cmp(det, 0.0);
+        if(sign > 0)
             res_arr[i] = 1;
-        else if(det < 0)
+        else if(sign < 0) //вынести
             res_arr[i] = -1;
         else
             res_arr[i] = 0;
@@ -57,15 +58,19 @@ bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
     }
 
     sort_triangles(tr_1, tr_2, res_1, sum_1);
+    sort_triangles(tr_2, tr_1, res_2, sum_2);
 
-    if((sum_1 == 2 || sum_2 == 2) || (sum_1 == -2 || sum_2 == -2))
+    if((sum_1 == 2 || sum_2 == 2) || (sum_1 == -2 || sum_2 == -2)) {
+        std::cout << "im here! 1" << std::endl;
         return true;
+    }
 
     std::array<geometry::vector_t, 3> vertices_1{tr_1.get_vertex(0), tr_1.get_vertex(1), tr_1.get_vertex(2)};
     std::array<geometry::vector_t, 3> vertices_2{tr_2.get_vertex(0), tr_2.get_vertex(1), tr_2.get_vertex(2)};
-    if(cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]), 0.0) <= 0 
+
+    if(cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[1], vertices_2[0]), 0.0) >= 0 
         && cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0) <= 0)
-        return true;
+            return true;
     return false;
 }
 
@@ -80,13 +85,10 @@ void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std:
 //------------------ 2D INTERSECTION ------------------//
 //---------------------------------------------------- //
 bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
-    std::cout << "tr_2: " << tr_2 << std::endl;
     tr_1.counter_clock();
     tr_2.counter_clock();
 
     geometry::vector_t p_1 = tr_1.get_vertex(0);
-    std::cout << "P1: " << p_1 << std::endl;
-    std::cout << "tr_2: " << tr_2 << std::endl;
     std::array<int, 3> res = check_relative_pos(p_1, tr_2);
 
     std::cout << "res: " << res[0] << ", " << res[1] << ", " << res[2] << std::endl;
