@@ -32,8 +32,8 @@ std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometr
 
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
     std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3);
-    std::cout << m[0] << "  " << m[1] << std::endl 
-              << m[2] << "  " << m[3] << std::endl;
+    // std::cout << m[0] << "  " << m[1] << std::endl 
+    //           << m[2] << "  " << m[3] << std::endl;
     return m[0] * m[3] - m[1] * m[2];
 }
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4) {

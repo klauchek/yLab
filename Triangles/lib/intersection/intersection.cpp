@@ -191,23 +191,33 @@ bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2){
 
     if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
         if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
-            if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]), 0.0) >= 0)
+            if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]), 0.0) >= 0) {
+                std::cout << "im here 1" << std::endl;
                 return 1;
+            }
         }
         else {
             if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]), 0.0) >= 0) {
-                if(cmp::dbl_cmp(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]), 0.0) >= 0)
+                std::cout << "det 1 " << common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) << std::endl;
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]), 0.0) >= 0) {
+                    std::cout << "det 2 " << common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) << std::endl;
+                    std::cout << "im here 2" << std::endl;
                     return 1;
+                }
             }
         }
     }
     else {
         if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
-                if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]), 0.0) >= 0)
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
+                    std::cout << "im here 3" << std::endl;
                     return 1;
-                if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0)
+                }
+                if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
+                    std::cout << "im here 4" << std::endl;
                     return 1;
+                }
             }
         }
     }

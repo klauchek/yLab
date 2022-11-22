@@ -70,17 +70,17 @@ int main() {
   //intersection
 
   //1 tr
-    struct geometry::vector_t vec12{0, 0, 0};
-    struct geometry::vector_t vec13{-3, 0, 0};
-    struct geometry::vector_t vec14{0, 2, 0};
-    //2 tr
-    struct geometry::vector_t vec15{-2.8, 4.4, -3};
-    struct geometry::vector_t vec16{-2.2, 0.25, -2};
-    struct geometry::vector_t vec17{3.3, 2.5, 3};
+  struct geometry::vector_t vec12{0, 0, 0};
+  struct geometry::vector_t vec13{-3, 0, 0};
+  struct geometry::vector_t vec14{0, 1.8, 0};
+  //2 tr
+  struct geometry::vector_t vec15{-0.74001, 1.36001, 0};
+  struct geometry::vector_t vec16{-1.44001, 0.94001, 0};
+  struct geometry::vector_t vec17{-1.36, 1.46, 0};
 
     geometry::triangle_t triangl_1(vec12, vec13, vec14);
     geometry::triangle_t triangl_2(vec15, vec16, vec17);
 
-  bool res_intersec = intersection::intersection(triangl_2, triangl_1);
+  bool res_intersec = intersection::intersection(triangl_1, triangl_2);
   std::cout << std::boolalpha << res_intersec << std::endl;
 }
