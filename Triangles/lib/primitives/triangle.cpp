@@ -52,11 +52,17 @@ void triangle_t::counter_clock() {
 
 }
 
-
 //moving p_1 to ++- or to +-- part with circular permutation of T2
 void triangle_t::circular_permutation(){
     std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
     std::swap(vertices_[1], vertices_[2]);
+}
+
+void swap(triangle_t &first, triangle_t &second) {
+    std::swap(first.vertices_[0], second.vertices_[0]);
+    std::swap(first.vertices_[1], second.vertices_[1]);
+    std::swap(first.vertices_[2], second.vertices_[2]);
+    std::cout << "im here swap" << std::endl;
 }
 
 }

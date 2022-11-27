@@ -71,12 +71,12 @@ int main() {
 
   //1 tr
   struct geometry::vector_t vec12{0, 0, 0};
-  struct geometry::vector_t vec13{-3, 0, 0};
-  struct geometry::vector_t vec14{0, 1.8, 0};
+  struct geometry::vector_t vec13{-0.8, 0, 0};
+  struct geometry::vector_t vec14{3, 0, 0};
   //2 tr
-  struct geometry::vector_t vec15{-0.74001, 1.36001, 0};
-  struct geometry::vector_t vec16{-1.44001, 0.94001, 0};
-  struct geometry::vector_t vec17{-1.36, 1.46, 0};
+  struct geometry::vector_t vec15{0, 0, 0};
+  struct geometry::vector_t vec16{-0.48, 0.77, 0};
+  struct geometry::vector_t vec17{-0.48, 0.77, 0};
 
     geometry::triangle_t triangl_1(vec12, vec13, vec14);
     geometry::triangle_t triangl_2(vec15, vec16, vec17);

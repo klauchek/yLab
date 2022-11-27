@@ -91,10 +91,16 @@ bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
     geometry::vector_t p_1 = tr_1.get_vertex(0);
     std::array<int, 3> res = check_relative_pos(p_1, tr_2);
 
+    if(std::count(res.begin(), res.end(), 0) == 3) {
+        geometry::swap(tr_1, tr_2);
+        p_1 = tr_1.get_vertex(0);
+        res = check_relative_pos(p_1, tr_2);
+    }
+
     std::cout << "res: " << res[0] << ", " << res[1] << ", " << res[2] << std::endl;
     if(intersec_first_step2D(res))
         return true;
-    
+
     //other cases - moving p_1 to ++- or to +-- part with circular permutation of T2
     // + means det >= 0; - means det < 0;
     // [p1, p2, q2]
@@ -148,13 +154,18 @@ bool intersec_first_step2D(std::array<int, 3> &res) {
         std::cout << "p1 is on the edge of T2!" << std::endl;
         return true;
     }
-    if(num_zeros == 3) {
-        //
-    }
     return false;
 }
 
-// --- check if p` is in ++- part +--
+// bool check_degenerate(std::array<int, 3> &res) {
+//     if(std::count(res.begin(), res.end(), 0) == 3) {
+//         std::cout << "p1 is collinear with all three edges of T2 -- T2 is a degenerate" << std::endl;
+//         return true;
+//     }
+//     return false;
+// }
+
+// --- check if p is in ++- part +--
 namespace {
 bool check_R1(std::array<int, 3> &res) {
     if(res[0] >= 0 && res[1] >= 0 && res[2] < 0)

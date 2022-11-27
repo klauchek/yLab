@@ -16,6 +16,8 @@ set(SRCS
   runner.cpp
   test_intersection3D_normal.cpp
   test_intersection2D_normal.cpp
+  test_degenerates.cpp
+  test_two_degenerates.cpp
 )
 set (EXEC_FILE "tests_runner")
 
