@@ -6,6 +6,7 @@
 #include <list>
 #include <utility>
 #include <memory>
+#include <algorithm>
 
 #include "vector.hpp"
 
@@ -41,7 +42,7 @@ public:
     std::array<octree_node_t<Obj>*, 8> children_{};
     std::list<Obj> objects_;
 
-    octree_node_t(std::list<Obj> &&objects_list, geometry::vector_t &&right, geometry::vector_t &&left, octree_node_t<Obj> *parent) :
+    octree_node_t(std::list<Obj> &&objects_list, geometry::vector_t &&right, geometry::vector_t &&left, octree_node_t<Obj> *parent = nullptr) :
                     parent_(parent), right_border_(std::move(right)), left_border_(std::move(left)), objects_(std::move(objects_list)) {}
     
     struct octree_node_deleter{
@@ -117,9 +118,36 @@ public:
 };
 
 template <typename Obj>
-struct octree_t {
+class octree_t {
     std::unique_ptr<octree_node_t<Obj>, typename octree_node_t<Obj>::octree_node_deleter> root_;
-    octree_t(octree_node_t<Obj> *root) : root_(root) {};
+    geometry::vector_t define_right(std::list<Obj>& objs){
+        double max = 0.0;
+        for(auto obj : objs) {
+            for(auto vert : obj.vertices_) {
+                double new_max = *std::max_element(vert.coords_.begin(), vert.coords_.end(), [](geometry::point_t a, geometry::point_t b){return std::abs(a) > std::abs(b);});
+                max = new_max > max ? new_max : max;
+            }
+        }
+        max += 0.5;
+        return geometry::vector_t{max, max, max};
+    }
+
+public:
+    octree_t(std::list<Obj>&& objs_list){
+        geometry::vector_t right = define_right(objs_list);
+        geometry::vector_t left = -right;
+        root_ = std::unique_ptr<octree_node_t<Obj>, typename octree_node_t<Obj>::octree_node_deleter>(new octree_node_t<Obj>(std::move(objs_list), std::move(left), std::move(right)));
+        root_->sift();
+
+        for(auto obj : root_->objects_)
+            std::cout << obj;
+        for(auto obj : root_->children_[0]->objects_) {
+            std::cout << obj;
+        }
+        for(auto obj : root_->children_[7]->objects_) {
+            std::cout << obj;
+        }
+    };
 };
 
 

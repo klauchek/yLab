@@ -14,6 +14,10 @@ unsigned char vector_t::relative_pos(const vector_t &other) const {
 	return res;
 }
 
+vector_t vector_t::operator-() const{
+    return vector_t{-coords_[0], -coords_[1], -coords_[2]};
+}
+
 //TODO: think about [] 
 vector_t operator+(const vector_t &first, const vector_t &second) {
     vector_t new_vec{first.get_coord(0) + second.get_coord(0),
@@ -36,6 +40,9 @@ vector_t vector_t::operator/(double num) {
 
 std::ostream& operator<<(std::ostream &out, const vector_t &vec) {
     return out  << "(" << vec.get_coord(0) << ", " << vec.get_coord(1) << ", " << vec.get_coord(2) << ")";
+}
+std::istream& operator>>(std::istream &in, vector_t &vec) {
+    return in >> vec.coords_[0] >> vec.coords_[1] >> vec.coords_[2];
 }
 
 }//namespace geometry

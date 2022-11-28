@@ -2,6 +2,8 @@
 #include "triangle.hpp"
 #include "octree.hpp"
 #include "intersection.hpp"
+#include <istream>
+#include <iterator>
 
 int main() {
   /////////////////////////////////////////////////////
@@ -40,21 +42,21 @@ int main() {
   /////////////////////////////////////////////////////
   /// ------------ TESTING OCTREE ------------------///
   /////////////////////////////////////////////////////
-  std::list<geometry::triangle_t> tr_list{triangl1, triangl2, triangl3};
-  //octree::octree_node_t<geometry::triangle_t>* node = new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr);
-  octree::octree_t<geometry::triangle_t> vosem_tree (new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr));
-  for(auto obj : vosem_tree.root_->objects_)
-    std::cout << obj;
-  std::cout << "----------\n";
-  vosem_tree.root_->sift();
- for(auto obj : vosem_tree.root_->objects_)
-    std::cout << obj;
-  for(auto obj : vosem_tree.root_->children_[0]->objects_) {
-    std::cout << obj;
-  }
-  for(auto obj : vosem_tree.root_->children_[7]->objects_) {
-    std::cout << obj;
-  }
+//   std::list<geometry::triangle_t> tr_list{triangl1, triangl2, triangl3};
+//   //octree::octree_node_t<geometry::triangle_t>* node = new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr);
+//   octree::octree_t<geometry::triangle_t> vosem_tree (new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr));
+//   for(auto obj : vosem_tree.root_->objects_)
+//     std::cout << obj;
+//   std::cout << "----------\n";
+//   vosem_tree.root_->sift();
+//  for(auto obj : vosem_tree.root_->objects_)
+//     std::cout << obj;
+//   for(auto obj : vosem_tree.root_->children_[0]->objects_) {
+//     std::cout << obj;
+//   }
+//   for(auto obj : vosem_tree.root_->children_[7]->objects_) {
+//     std::cout << obj;
+//   }
   /////////////////////////////////////////////////////
   /// ---------TESTING 3D INTRSECTION---------------///
   /////////////////////////////////////////////////////
@@ -78,9 +80,18 @@ int main() {
   struct geometry::vector_t vec16{-0.48, 0.77, 0};
   struct geometry::vector_t vec17{-0.48, 0.77, 0};
 
-    geometry::triangle_t triangl_1(vec12, vec13, vec14);
-    geometry::triangle_t triangl_2(vec15, vec16, vec17);
+  geometry::triangle_t triangl_1(vec12, vec13, vec14);
+  geometry::triangle_t triangl_2(vec15, vec16, vec17);
 
-  bool res_intersec = intersection::intersection(triangl_1, triangl_2);
-  std::cout << std::boolalpha << res_intersec << std::endl;
+  // bool res_intersec = intersection::intersection(triangl_1, triangl_2);
+  // std::cout << std::boolalpha << res_intersec << std::endl;
+
+
+  size_t N;
+  std::cin >> N;
+
+  std::list<geometry::triangle_t> triangle_list;
+  std::copy_n(std::istream_iterator<geometry::triangle_t>(std::cin), N, std::inserter(triangle_list, triangle_list.end()));
+    // алгоритм сортировки
+  octree::octree_t<geometry::triangle_t> tree (std::move(triangle_list));
 }

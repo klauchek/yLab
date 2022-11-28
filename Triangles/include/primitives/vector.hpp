@@ -20,6 +20,7 @@ struct vector_t {
 
   unsigned char relative_pos(const vector_t &other) const;
 
+  vector_t operator-() const;
   vector_t operator/(double num);
   point_t &operator[](int num) { return coords_[num]; }
   const point_t &operator[](int num) const { return coords_[num]; }
@@ -28,6 +29,7 @@ struct vector_t {
 vector_t operator+(const vector_t &first, const vector_t &second);
 vector_t operator-(const vector_t &first, const vector_t &second);
 
+std::istream& operator>>(std::istream &in, vector_t &vec);
 std::ostream& operator<<(std::ostream &out, const vector_t &vec);
 }
 

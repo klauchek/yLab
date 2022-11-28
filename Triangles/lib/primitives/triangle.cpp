@@ -8,8 +8,13 @@ vector_t triangle_t::get_vertex(int num) const {
 size_t triangle_t::get_nvertex() const { 
     return vertices_.size();
 }
+
+//TODO: triangle is a struct now! no need for getters
 std::ostream& operator<<(std::ostream &out, const triangle_t &triangle) {
     return out  << "[" << triangle.get_vertex(0) << "; " << triangle.get_vertex(1) << "; " << triangle.get_vertex(2) << "]" << std::endl;
+}
+std::istream& operator>>(std::istream &in, triangle_t &triangle) {
+    return in  >> triangle.vertices_[0] >> triangle.vertices_[1] >> triangle.vertices_[2];
 }
 
 //-----------------------------------------------//
