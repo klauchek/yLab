@@ -16,6 +16,8 @@ TEST(test_2D, close_without_intersec_edge) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_FALSE(res_intersec); //enough accuracy
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec); //enough accuracy
 }
 
 TEST(test_2D, close_without_intersec_vertex) {
@@ -32,6 +34,8 @@ TEST(test_2D, close_without_intersec_vertex) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);//not enough accuracy
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);//not enough accuracy
 }
 
@@ -50,6 +54,8 @@ TEST(test_2D, intersec_vertex_vertex) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D, intersec_edge_vertex) {
@@ -66,6 +72,8 @@ TEST(test_2D, intersec_edge_vertex) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -84,6 +92,8 @@ TEST(test_2D, intersec_edge_edge) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D, common_vertex) {
@@ -99,6 +109,8 @@ TEST(test_2D, common_vertex) {
     geometry::triangle_t triangle_2(vec20, vec21, vec12);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -117,6 +129,8 @@ TEST(test_2D, edge_on_edge) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D, vertex_on_edge) {
@@ -133,5 +147,7 @@ TEST(test_2D, vertex_on_edge) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }

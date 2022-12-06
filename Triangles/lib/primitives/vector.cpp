@@ -38,6 +38,14 @@ vector_t vector_t::operator/(double num) {
     return new_vec;
 }
 
+double length(const vector_t &first, const vector_t &second) {
+    double x = first.coords_[0] - second.coords_[0];
+    double y = first.coords_[1] - second.coords_[1];
+    double z = first.coords_[2] - second.coords_[2];
+
+    return std::sqrt(x * x + y * y + z * z);
+}
+
 std::ostream& operator<<(std::ostream &out, const vector_t &vec) {
     return out  << "(" << vec.get_coord(0) << ", " << vec.get_coord(1) << ", " << vec.get_coord(2) << ")";
 }

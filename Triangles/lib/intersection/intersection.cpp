@@ -96,6 +96,10 @@ bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
         p_1 = tr_1.get_vertex(0);
         res = check_relative_pos(p_1, tr_2);
     }
+    if(std::count(res.begin(), res.end(), 0) == 3) {
+        std::cout << "Two degenerates intersection" << std::endl;
+        return intersection_degenerate(tr_1, tr_2);
+    }
 
     std::cout << "res: " << res[0] << ", " << res[1] << ", " << res[2] << std::endl;
     if(intersec_first_step2D(res))
@@ -157,13 +161,48 @@ bool intersec_first_step2D(std::array<int, 3> &res) {
     return false;
 }
 
-// bool check_degenerate(std::array<int, 3> &res) {
-//     if(std::count(res.begin(), res.end(), 0) == 3) {
-//         std::cout << "p1 is collinear with all three edges of T2 -- T2 is a degenerate" << std::endl;
-//         return true;
-//     }
-//     return false;
-// }
+//const??
+bool intersection_degenerate(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2) {
+    tr_1.line_counter_clock();
+    tr_2.line_counter_clock();
+
+    geometry::vector_t p1 = tr_1.vertices_[0];
+    geometry::vector_t r1 = tr_1.vertices_[2];
+    geometry::vector_t p2 = tr_2.vertices_[0];
+    geometry::vector_t r2 = tr_2.vertices_[2];
+
+    double det_1 = common::calc_det(p1, p2, r1);
+    double det_2 = common::calc_det(p1, r2, r1);
+    double det_3 = common::calc_det(p2, p1, r2);
+    double det_4 = common::calc_det(p2, r1, r2);
+
+    if(det_signs_comp(det_1, det_2) || det_signs_comp(det_3, det_4))
+        return false;
+    if(det_1 == 0 && det_2 == 0)
+        return one_line_degenerates(p1, r1, p2, r2);
+    return true;
+}
+
+
+bool det_signs_comp(double det_1, double det_2) {
+    if((cmp::dbl_cmp(det_1, 0.0) > 0 && cmp::dbl_cmp(det_2, 0.0) > 0) || (cmp::dbl_cmp(det_1, 0.0) < 0 && cmp::dbl_cmp(det_2, 0.0) < 0))
+        return true;
+    return false;
+}
+
+bool one_line_degenerates(geometry::vector_t &p1, geometry::vector_t &r1, geometry::vector_t &p2, geometry::vector_t &r2) {
+    double p1r1 = geometry::length(p1, r1);
+
+    double p2r1 = geometry::length(p2, r1);
+    double p1r2 = geometry::length(p1, r2);
+    double p1p2 = geometry::length(p1, p2);
+    double r1r2 = geometry::length(r1, r2);
+
+    if((p2r1 + p1p2 == p1r1) ||
+        (r1r2 + p1r2 == p1r1))
+        return true;
+    return false;
+}
 
 // --- check if p is in ++- part +--
 namespace {

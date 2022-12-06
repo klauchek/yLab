@@ -70,4 +70,30 @@ void swap(triangle_t &first, triangle_t &second) {
     std::cout << "im here swap" << std::endl;
 }
 
+//--------------------------------------------------------//
+//---------- FUNCTIONS FOR DEGENERATES INTERSECTION ------//
+//--------------------------------------------------------//
+
+void triangle_t::line_counter_clock() {
+    double len_1 = length(vertices_[0], vertices_[2]);
+    double len_2 = length(vertices_[0], vertices_[1]);
+    double len_3 = length(vertices_[1], vertices_[2]);
+
+    double max_1 = std::max(len_1, len_2);
+    double max_2 = std::max(max_1, len_3);
+
+    if(max_2 == len_1) 
+        return;
+    if(max_2 == len_2) {
+        std::swap(vertices_[1], vertices_[2]);
+        return;
+    }
+    if(max_2 == len_3) { 
+        std::swap(vertices_[0], vertices_[1]);
+        return;
+    }
+
+}
+
+
 }

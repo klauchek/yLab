@@ -21,6 +21,8 @@ struct triangle_t {
     void counter_clock();
     void set_p(std::array<int, 3> &res, int sum);
     void swap_qr();
+
+    void line_counter_clock();
 };
 
 std::ostream& operator<<(std::ostream &out, const triangle_t &triangle);

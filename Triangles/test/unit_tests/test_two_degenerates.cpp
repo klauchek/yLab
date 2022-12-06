@@ -16,6 +16,8 @@ TEST(test_deg, segments_intersec) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_deg, segments_common_point) {
@@ -32,6 +34,8 @@ TEST(test_deg, segments_common_point) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 

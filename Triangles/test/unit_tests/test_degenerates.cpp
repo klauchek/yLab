@@ -16,6 +16,8 @@ TEST(test_3D_deg, seg_triag_without_intersec_3D) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec);
 }
 
 TEST(test_3D_deg, seg_triag_intersec_3D) {
@@ -32,6 +34,8 @@ TEST(test_3D_deg, seg_triag_intersec_3D) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -50,6 +54,8 @@ TEST(test_3D_deg, seg_one_point_in_triag_3D) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D_deg, seg_triag_without_intersec_2D) {
@@ -66,6 +72,8 @@ TEST(test_2D_deg, seg_triag_without_intersec_2D) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_FALSE(res_intersec);
 }
 
@@ -85,6 +93,8 @@ TEST(test_2D_deg, seg_triag_without_intersec_2D_2) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec);
 }
 
 TEST(test_2D_deg, seg_triag_without_intersec_2D_3) {
@@ -103,6 +113,8 @@ TEST(test_2D_deg, seg_triag_without_intersec_2D_3) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec);
 }
 
 TEST(test_2D_deg, seg_triag_edge_intersec_2D) {
@@ -119,6 +131,8 @@ TEST(test_2D_deg, seg_triag_edge_intersec_2D) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -137,6 +151,8 @@ TEST(test_2D_deg, seg_triag_vertex_intersec_2D) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D_deg, seg_in_triag_2D) {
@@ -153,6 +169,8 @@ TEST(test_2D_deg, seg_in_triag_2D) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -171,6 +189,8 @@ TEST(test_2D_deg, seg_triag_common_edge_2D) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D_deg, seg_triag_common_point_2D) {
@@ -187,6 +207,8 @@ TEST(test_2D_deg, seg_triag_common_point_2D) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -206,6 +228,8 @@ TEST(test_2D_deg, seg_triag_common_vertex_2D) {
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
     EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
 }
 
 TEST(test_2D_deg, vertex_on_seg_2D) {
@@ -222,6 +246,8 @@ TEST(test_2D_deg, vertex_on_seg_2D) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec);
 }
 
@@ -240,6 +266,8 @@ TEST(test_2D_deg, point_in_triag) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_TRUE(res_intersec); 
 }
 
@@ -256,5 +284,7 @@ TEST(test_3D_deg, point_not_in_triag) {
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
 
     bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
     EXPECT_FALSE(res_intersec);
 }

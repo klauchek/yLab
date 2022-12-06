@@ -4,6 +4,7 @@
 #include <array>
 #include <iostream>
 #include <climits>
+#include <cmath>
 
 namespace geometry {
 using point_t = double;
@@ -24,7 +25,10 @@ struct vector_t {
   vector_t operator/(double num);
   point_t &operator[](int num) { return coords_[num]; }
   const point_t &operator[](int num) const { return coords_[num]; }
+
 };
+
+double length(const vector_t &first, const vector_t &second);
 
 vector_t operator+(const vector_t &first, const vector_t &second);
 vector_t operator-(const vector_t &first, const vector_t &second);

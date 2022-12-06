@@ -46,4 +46,5 @@ double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2
         m[0] * m[1 * 3 + 2] * m[2 * 3 + 1];
 }
 
+
 }
