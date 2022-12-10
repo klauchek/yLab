@@ -139,14 +139,14 @@ public:
         root_ = std::unique_ptr<octree_node_t<Obj>, typename octree_node_t<Obj>::octree_node_deleter>(new octree_node_t<Obj>(std::move(objs_list), std::move(left), std::move(right)));
         root_->sift();
 
-        for(auto obj : root_->objects_)
-            std::cout << obj;
-        for(auto obj : root_->children_[0]->objects_) {
-            std::cout << obj;
-        }
-        for(auto obj : root_->children_[7]->objects_) {
-            std::cout << obj;
-        }
+        // for(auto obj : root_->objects_)
+        //     std::cout << obj;
+        // for(auto obj : root_->children_[0]->objects_) {
+        //     std::cout << obj;
+        // }
+        // for(auto obj : root_->children_[7]->objects_) {
+        //     std::cout << obj;
+        // }
     };
 };
 

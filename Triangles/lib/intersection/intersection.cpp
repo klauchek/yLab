@@ -178,8 +178,10 @@ bool intersection_degenerate(geometry::triangle_t &tr_1, geometry::triangle_t &t
 
     if(det_signs_comp(det_1, det_2) || det_signs_comp(det_3, det_4))
         return false;
-    if(det_1 == 0 && det_2 == 0)
+    if(det_1 == 0 && det_2 == 0) {
+        std::cout << "i here line degenerates" << std::endl;
         return one_line_degenerates(p1, r1, p2, r2);
+    }
     return true;
 }
 
@@ -192,14 +194,16 @@ bool det_signs_comp(double det_1, double det_2) {
 
 bool one_line_degenerates(geometry::vector_t &p1, geometry::vector_t &r1, geometry::vector_t &p2, geometry::vector_t &r2) {
     double p1r1 = geometry::length(p1, r1);
-
     double p2r1 = geometry::length(p2, r1);
     double p1r2 = geometry::length(p1, r2);
     double p1p2 = geometry::length(p1, p2);
     double r1r2 = geometry::length(r1, r2);
+    double p2r2 = geometry::length(p2, r2);
 
-    if((p2r1 + p1p2 == p1r1) ||
-        (r1r2 + p1r2 == p1r1))
+    if((cmp::dbl_cmp(p2r1 + p1p2, p1r1) == 0) ||
+        (cmp::dbl_cmp(r1r2 + p1r2, p1r1) == 0) ||
+        (cmp::dbl_cmp(p1p2 + p1r2, p2r2) == 0) ||
+        (cmp::dbl_cmp(r1r2 + p2r1, p2r2) == 0))
         return true;
     return false;
 }
