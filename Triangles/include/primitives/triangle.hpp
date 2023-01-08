@@ -10,6 +10,7 @@ namespace geometry {
 struct triangle_t {
 
     std::array<vector_t, 3> vertices_;
+    int name = -1;
 
     triangle_t(){}
     triangle_t(const vector_t &vec_1, const vector_t &vec_2, const vector_t &vec_3) : vertices_{vec_1, vec_2, vec_3} {}

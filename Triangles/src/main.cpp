@@ -4,11 +4,14 @@
 #include "intersection.hpp"
 #include <istream>
 #include <iterator>
+#include <utility>
 
 // void find_intersected(std::list<geometry::triangle_t> &triangle_list) {
 // 	octree::octree_t<geometry::triangle_t> tree (std::move(triangle_list));
 	
 // }
+
+
 
 int main() {
 	/////////////////////////////////////////////////////
@@ -42,60 +45,40 @@ int main() {
 	geometry::triangle_t triangl3(vec9, vec10, vec11);
 	//geometry::triangle_t triangl2(vec4, vec5, vec6);
 
-	//std::cout << triangle;
-	//---------------------
-	/////////////////////////////////////////////////////
-	/// ------------ TESTING OCTREE ------------------///
-	/////////////////////////////////////////////////////
-//   std::list<geometry::triangle_t> tr_list{triangl1, triangl2, triangl3};
-//   //octree::octree_node_t<geometry::triangle_t>* node = new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr);
-//   octree::octree_t<geometry::triangle_t> vosem_tree (new octree::octree_node_t<geometry::triangle_t>(std::move(tr_list), std::move(vec8), std::move(vec7), nullptr));
-//   for(auto obj : vosem_tree.root_->objects_)
-//     std::cout << obj;
-//   std::cout << "----------\n";
-//   vosem_tree.root_->sift();
-//  for(auto obj : vosem_tree.root_->objects_)
-//     std::cout << obj;
-//   for(auto obj : vosem_tree.root_->children_[0]->objects_) {
-//     std::cout << obj;
-//   }
-//   for(auto obj : vosem_tree.root_->children_[7]->objects_) {
-//     std::cout << obj;
-//   }
 	/////////////////////////////////////////////////////
 	/// ---------TESTING 3D INTRSECTION---------------///
 	/////////////////////////////////////////////////////
 
 
-	//det calculation
-
-	double det2 = common::calc_det(vec4, vec5, vec6);
-	double det3 = common::calc_det(vec4, vec5, vec6, vec7);
-	double det3_1 = common::calc_det(vec4, vec5, vec6, vec8);
-	std::cout << "det2: " << det2 << ", det3: " << det3 << ", det3_1: " << det3_1 <<  std::endl;
-
 	//intersection
 
 	//1 tr
-	struct geometry::vector_t vec12{0, 0, 0};
-	struct geometry::vector_t vec13{-0.8, 0, 0};
-	struct geometry::vector_t vec14{3, 0, 0};
+	struct geometry::vector_t vec12{3, 3, 3};
+	struct geometry::vector_t vec13{1, 1, 1};
+	struct geometry::vector_t vec14{0, 0, 0};
 	//2 tr
-	struct geometry::vector_t vec15{-0.68, 0, 0};
-	struct geometry::vector_t vec16{-0.68, 0, 0};
-	struct geometry::vector_t vec17{-0.68, 0, 0};
+	struct geometry::vector_t vec15{2, 2, 4.1};
+	struct geometry::vector_t vec16{5, 5, 4};
+	struct geometry::vector_t vec17{4, 4, 1.5};
 
 	geometry::triangle_t triangl_1(vec12, vec13, vec14);
 	geometry::triangle_t triangl_2(vec15, vec16, vec17);
 
-	bool res_intersec = intersection::intersection(triangl_1, triangl_2);
-	std::cout << std::boolalpha << res_intersec << std::endl;
+	// bool res_intersec = intersection::intersection(triangl_1, triangl_2);
+	// std::cout << std::boolalpha << res_intersec << std::endl;
 
 
 	size_t N;
 	std::cin >> N;
 
 	std::list<geometry::triangle_t> triangle_list;
-	std::copy_n(std::istream_iterator<geometry::triangle_t>(std::cin), N, std::inserter(triangle_list, triangle_list.end()));
-	
+	for(size_t num = 0; num < N; ++num) {
+		geometry::triangle_t triangle;
+		std::cin >> triangle;
+		triangle.name = num;
+		triangle_list.emplace_back(std::move(triangle));
+	}
+
+	octree::octree_t<geometry::triangle_t> tree (std::move(triangle_list));
+	tree.intersector();
 }

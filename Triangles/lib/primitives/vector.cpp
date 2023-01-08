@@ -6,7 +6,7 @@ unsigned char vector_t::relative_pos(const vector_t &other) const {
 	unsigned char res = 0;
 	for(int i = 0; i < 3; ++i) {
 		double cur_coord = other[i];
-		if(cmp::dbl_cmp(cur_coord, coords_[i]) == 0) //TODO: double cmp
+		if(cmp::dbl_cmp(cur_coord, coords_[i]) == 0)
 			return UCHAR_MAX;
 		if(cmp::dbl_cmp(coords_[i], cur_coord) > 0)
 			res |= (1 << i);
@@ -38,12 +38,32 @@ vector_t vector_t::operator/(double num) {
     return new_vec;
 }
 
+bool vector_t::is_zero_vec() {
+    if(cmp::dbl_cmp(coords_[0], 0) == 0 && cmp::dbl_cmp(coords_[1], 0) == 0 && cmp::dbl_cmp(coords_[2], 0) == 0)
+        return true;
+    return false;
+}
+
+
+//через скалярное произведение
 double length(const vector_t &first, const vector_t &second) {
     double x = first.coords_[0] - second.coords_[0];
     double y = first.coords_[1] - second.coords_[1];
     double z = first.coords_[2] - second.coords_[2];
 
     return std::sqrt(x * x + y * y + z * z);
+}
+
+vector_t normal(const vector_t &first, const vector_t &second) {
+    vector_t new_vec { first.coords_[1] * second.coords_[2] - first.coords_[2] * second.coords_[1],
+                    first.coords_[2] * second.coords_[0] - first.coords_[0] * second.coords_[2],
+                    first.coords_[0] * second.coords_[1] - first.coords_[1] * second.coords_[0]};
+    return new_vec;
+}
+
+double dot_product(const vector_t &first, const vector_t &second) {
+    return first.coords_[0] * second.coords_[0] + first.coords_[1] * second.coords_[1] + first.coords_[2] * second.coords_[2];
+
 }
 
 std::ostream& operator<<(std::ostream &out, const vector_t &vec) {

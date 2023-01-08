@@ -23,12 +23,15 @@ struct vector_t {
 
   vector_t operator-() const;
   vector_t operator/(double num);
+  bool is_zero_vec();
   point_t &operator[](int num) { return coords_[num]; }
   const point_t &operator[](int num) const { return coords_[num]; }
 
 };
 
 double length(const vector_t &first, const vector_t &second);
+vector_t normal(const vector_t &first, const vector_t &second);
+double dot_product(const vector_t &first, const vector_t &second);
 
 vector_t operator+(const vector_t &first, const vector_t &second);
 vector_t operator-(const vector_t &first, const vector_t &second);

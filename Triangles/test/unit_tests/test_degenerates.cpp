@@ -271,7 +271,7 @@ TEST(test_2D_deg, point_in_triag) {
     EXPECT_TRUE(res_intersec); 
 }
 
-TEST(test_3D_deg, point_not_in_triag) {
+TEST(test_2D_deg, point_not_in_triag) {
     //1 tr
     struct geometry::vector_t vec10{0, 0, 0};
     struct geometry::vector_t vec11{0, 2, 0};

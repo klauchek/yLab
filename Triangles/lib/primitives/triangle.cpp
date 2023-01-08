@@ -9,6 +9,7 @@ size_t triangle_t::get_nvertex() const {
     return vertices_.size();
 }
 
+
 //TODO: triangle is a struct now! no need for getters
 std::ostream& operator<<(std::ostream &out, const triangle_t &triangle) {
     return out  << "[" << triangle.get_vertex(0) << "; " << triangle.get_vertex(1) << "; " << triangle.get_vertex(2) << "]" << std::endl;
@@ -47,14 +48,14 @@ void triangle_t::swap_qr() {
 //---------- FUNCTIONS FOR 2D INTERSECTION ------//
 //-----------------------------------------------//
 
+
+//calc det??
 void triangle_t::counter_clock() {
     double det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
-    if(cmp::dbl_cmp(det, 0.0) < 0)
+    if(cmp::dbl_cmp(det, 0.0) < 0) {
+        std::cout << "SWAP HAPPENED!" << std::endl;
         swap_qr();
-    std::cout << "Det before" << det << std::endl;                     //
-    det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);  //remove after debug
-    std::cout << "Det after" << det << std::endl;                      //
-
+    }
 }
 
 //moving p_1 to ++- or to +-- part with circular permutation of T2
