@@ -82,7 +82,7 @@ public:
         size_t num_vertex = object.get_nvertex(); //TODO: define for each object class
         unsigned char part[3]{}; //TODO there should be num of vertex, not 3
         for(size_t i = 0; i < num_vertex; ++i) {
-            geometry::vector_t cur_vertex = object.get_vertex(i); //TODO: define for each object class
+            geometry::vector_t cur_vertex = object[i]; //TODO: define for each object class
             geometry::vector_t middle_of_diag = (left_border_ + right_border_) / 2.0;
             part[i] = cur_vertex.relative_pos(middle_of_diag);
             
@@ -102,9 +102,9 @@ public:
     }
     void sift() {
 
-        double diag = (left_border_.get_coord(0) - right_border_.get_coord(0)) * (left_border_.get_coord(0) - right_border_.get_coord(0)) +
-                    (left_border_.get_coord(1) - right_border_.get_coord(1)) * (left_border_.get_coord(1) - right_border_.get_coord(1)) +
-                    (left_border_.get_coord(2) - right_border_.get_coord(2)) * (left_border_.get_coord(2) - right_border_.get_coord(2));
+        double diag = (left_border_[0] - right_border_[0]) * (left_border_[0] - right_border_[0]) +
+                    (left_border_[1] - right_border_[1]) * (left_border_[1] - right_border_[1]) +
+                    (left_border_[2] - right_border_[2]) * (left_border_[2] - right_border_[2]);
         if(objects_.size() == 1 || cmp::dbl_cmp(diag, (min_space * min_space)) < 0)
             return;
         std::array<std::list<Obj>, 8> children_objs{};

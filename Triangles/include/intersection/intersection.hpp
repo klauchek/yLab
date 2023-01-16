@@ -13,19 +13,21 @@ namespace intersection {
 
 std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2);
 std::array<int, 3> check_relative_pos(const geometry::vector_t &p_1, const geometry::triangle_t &tr_2);
-bool intersection2D(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
-bool intersection(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
+bool intersection2D(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
+bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
 bool determine_side(geometry::vector_t &point, geometry::vector_t &a, geometry::vector_t &b, geometry::vector_t &c);
-bool point_in_triangle(geometry::vector_t &point, geometry::vector_t &a, geometry::vector_t &b, geometry::vector_t &c);
-std::pair<geometry::triangle_t, geometry::triangle_t> project_coplanar(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
-void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, std::array<int, 3> &res_1, int sum_1);
-bool intersec_first_step2D(std::array<int, 3> &res);
-bool intersection_degenerate(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
+bool point_in_triangle(const geometry::vector_t &point, const geometry::triangle_t &tr);
+bool one_common_point_3D(const std::array<int, 3> res, const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2);
+std::pair<geometry::triangle_t, geometry::triangle_t> projection(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2, size_t axe_1, size_t axe_2);
+std::pair<geometry::triangle_t, geometry::triangle_t> project_coplanar(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2);
+void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> res_1, int sum_1);
+bool intersec_first_step2D(const std::array<int, 3> res);
+bool intersection_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
 bool det_signs_comp(double det_1, double det_2);
-bool one_line_degenerates(geometry::vector_t &p1, geometry::vector_t &r1, geometry::vector_t &p2, geometry::vector_t &r2);
-bool determine_region(const geometry::vector_t &p_1, std::array<int, 3> &res, geometry::triangle_t &tr_2);
-bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
-bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
+bool one_line_degenerates(const geometry::vector_t &p1, const geometry::vector_t &r1, const geometry::vector_t &p2, const geometry::vector_t &r2);
+// bool determine_region(const geometry::vector_t &p_1, std::array<int, 3> res, geometry::triangle_t &tr_2);
+// bool solution_R1(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
+// bool solution_R2(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2);
 
 
 } //namespace intersection

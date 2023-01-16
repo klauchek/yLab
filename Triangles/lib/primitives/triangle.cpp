@@ -2,9 +2,6 @@
 
 namespace geometry {
 
-vector_t triangle_t::get_vertex(int num) const {
-    return vertices_[num];
-}
 size_t triangle_t::get_nvertex() const { 
     return vertices_.size();
 }
@@ -12,7 +9,7 @@ size_t triangle_t::get_nvertex() const {
 
 //TODO: triangle is a struct now! no need for getters
 std::ostream& operator<<(std::ostream &out, const triangle_t &triangle) {
-    return out  << "[" << triangle.get_vertex(0) << "; " << triangle.get_vertex(1) << "; " << triangle.get_vertex(2) << "]" << std::endl;
+    return out  << "[" << triangle[0] << "; " << triangle[1] << "; " << triangle[2] << "]" << std::endl;
 }
 std::istream& operator>>(std::istream &in, triangle_t &triangle) {
     return in  >> triangle.vertices_[0] >> triangle.vertices_[1] >> triangle.vertices_[2];
@@ -21,7 +18,7 @@ std::istream& operator>>(std::istream &in, triangle_t &triangle) {
 //-----------------------------------------------//
 //---------- FUNCTIONS FOR 3D INTERSECTION ------//
 //-----------------------------------------------//
-void triangle_t::circular_permutation(std::array<int, 3> &res, int sign){
+void triangle_t::circular_permutation(const std::array<int, 3> res, int sign){
     if(res[0] == sign)
         return;
     std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
@@ -31,7 +28,7 @@ void triangle_t::circular_permutation(std::array<int, 3> &res, int sign){
         std::swap(vertices_[1], vertices_[2]);
 }
 
-void triangle_t::set_p(std::array<int, 3> &res, int sum) {
+void triangle_t::set_p(const std::array<int, 3> res, int sum) {
     if(sum == 1)
         circular_permutation(res, -1);
     if(sum == -1)
