@@ -37,7 +37,6 @@ void triangle_t::set_p(const std::array<int, 3> res, int sum) {
         circular_permutation(res, 0);
 }
 void triangle_t::swap_qr() {
-    std::cout << "swap happened" << std::endl;
     std::swap(vertices_[1], vertices_[2]);
 }
 
@@ -49,10 +48,8 @@ void triangle_t::swap_qr() {
 //calc det??
 void triangle_t::counter_clock() {
     double det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
-    if(cmp::dbl_cmp(det, 0.0) < 0) {
-        std::cout << "SWAP HAPPENED!" << std::endl;
+    if(cmp::dbl_cmp(det, 0.0) < 0)
         swap_qr();
-    }
 }
 
 //moving p_1 to ++- or to +-- part with circular permutation of T2

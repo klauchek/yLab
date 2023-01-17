@@ -78,16 +78,15 @@ public:
         return parent_;
     }
 
+    
     unsigned char where(const Obj &object) const{
-        size_t num_vertex = object.get_nvertex(); //TODO: define for each object class
-        unsigned char part[3]{}; //TODO there should be num of vertex, not 3
+        size_t num_vertex = object.get_nvertex();
+        unsigned char part[num_vertex]{}; //we can do it because in triangle vertices is an array
         for(size_t i = 0; i < num_vertex; ++i) {
-            geometry::vector_t cur_vertex = object[i]; //TODO: define for each object class
+            geometry::vector_t cur_vertex = object[i];
             geometry::vector_t middle_of_diag = (left_border_ + right_border_) / 2.0;
             part[i] = cur_vertex.relative_pos(middle_of_diag);
             
-            for (auto par : part)
-                std::cout << static_cast<unsigned>(par) << " " << std::endl;
             auto x = part[0];
             auto y = part[1];
             auto z = part[2];
@@ -95,8 +94,6 @@ public:
             if (x == y)
                 if (y == z)
                     return part[0];
-            // if(!std::equal(part, part + num_vertex, part))
-            //     return UCHAR_MAX;
         }
         return UCHAR_MAX;
     }
@@ -158,6 +155,14 @@ public:
         root_->sift();
     }
 
+    void insert_intersected(const Obj &obj_1, const Obj &obj_2, std::unordered_set<int> &intersected) {
+        bool res_intersec = intersection::intersection(obj_1, obj_2);
+        if(res_intersec) {
+            intersected.insert(obj_1.name);
+            intersected.insert(obj_2.name);
+        }
+    }
+
     void intersector(){
         std::stack<octree_node_t<Obj> *> stack;
 
@@ -177,53 +182,34 @@ public:
                     stack.push(child);
         }
 
-        std::cout << "to inter size " << to_intersect.size() << std::endl;
         while(!to_intersect.empty()) {
             auto* cur = to_intersect.top();
             to_intersect.pop();
 
             //intersection between objs in one node
             for (auto obj_it_1 = cur->objects_.begin(); obj_it_1 != std::prev(cur->objects_.end()); obj_it_1 = std::next(obj_it_1)) {
-                for (auto obj_it_2 = std::next(obj_it_1); obj_it_2 != cur->objects_.end(); obj_it_2 = std::next(obj_it_2)) {
-                    bool res_intersec = intersection::intersection(*obj_it_1, *obj_it_2);
-                        std::cout << obj_it_1->name << " " << obj_it_2->name << std::endl;
-                    if(res_intersec) {
-                        std::cout << "intersection here in octree _ 1" << std::endl;
-                        intersected.insert(obj_it_1->name);
-                        intersected.insert(obj_it_2->name);
-                    }
-                    else{
-                            std::cout << "no intersec" << std::endl;
-                    } 
-                }
+                for (auto obj_it_2 = std::next(obj_it_1); obj_it_2 != cur->objects_.end(); obj_it_2 = std::next(obj_it_2))
+                    insert_intersected(*obj_it_1, *obj_it_2, intersected);
             }
             //intersection between objs from one node with objs from parents
             auto* parent = cur->get_parent();
             while(parent) {
                 for(auto obj : cur->objects_) {
-                    for(auto parent_obj : parent->objects_) {
-                        bool res_intersec = intersection::intersection(obj, parent_obj);
-                        if(res_intersec) {
-                            std::cout << "intersection here in octree _2" << std::endl;
-                            intersected.insert(obj.name);
-                            intersected.insert(parent_obj.name);
-                        }
-                        else{
-                            std::cout << "no intersec" << std::endl;
-                        }  
-                    }
+                    for(auto parent_obj : parent->objects_) 
+                        insert_intersected(obj, parent_obj, intersected);
                 }
                 parent = parent->get_parent();
             }
         }
-        std::cout << "to intersec size " << intersected.size() << std::endl;
+        std::cout << "Intersected triangles: " << intersected.size() << std::endl;
+        std::vector<int> v_intersected(intersected.begin(), intersected.end());
+        std::sort(v_intersected.begin(), v_intersected.end());
+        for(auto v : v_intersected)
+            std::cout << v << " ";
     }
 };
 
 
 }
-
-
-
 
 #endif //__OCTREE__H__

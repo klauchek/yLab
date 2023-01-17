@@ -30,9 +30,6 @@ std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const ge
         else
             res_arr[i] = 0;
     }
-    //for(auto u : res_arr)
-    //    std::cout << u << " ";
-    //std::cout << std::endl; 
     return res_arr;
 }
 
@@ -71,14 +68,13 @@ bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
     std::array<int, 3> res_2 = check_relative_pos(tr_1, tr_2);
     int sum_2 = std::accumulate(res_2.begin(), res_2.end(), 0);
 
-    std::cout << "sum_1: " << sum_1 << " sum 2: " << sum_2 << std::endl;
+    //std::cout << "sum_1: " << sum_1 << " sum 2: " << sum_2 << std::endl;
 
-    if(std::abs(sum_1) == 3 || std::abs(sum_2 == 3)) {
+    if(std::abs(sum_1) == 3 || std::abs(sum_2) == 3) {
         std::cout << "No intersection possible!" << std::endl;
         return false;
     }
     if(sum_1 == 0 && sum_2 == 0) {
-        std::cout << "sum_1: " << sum_1 << " sum 2: " << sum_2 << std::endl;
         std::cout << "We have 2D intersection!" << std::endl;
         return intersection2D(tr_1, tr_2);
     }
@@ -164,8 +160,6 @@ std::pair<geometry::triangle_t, geometry::triangle_t> projection(const geometry:
     tmp_tr_2.vertices_[2].coords_[axe] = 0;
 
     auto prj = std::make_pair(tmp_tr_1, tmp_tr_2);
-
-    std::cout << "  projections : " << tmp_tr_1 << tmp_tr_2 << std::endl;
     return prj;
 }
 
@@ -182,24 +176,13 @@ std::pair<geometry::triangle_t, geometry::triangle_t> project_coplanar(const geo
 
     //Projection of the triangles in 3D onto 2D such that the area of the projection is maximized
     // Project onto plane YZ
-    if (cmp::dbl_cmp(n_x, n_z) >= 0 && cmp::dbl_cmp(n_x, n_y) >= 0 && !normal.is_zero_vec()) {
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << "________________________ I M HERE YZ ______________________" << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
+    if (cmp::dbl_cmp(n_x, n_z) >= 0 && cmp::dbl_cmp(n_x, n_y) >= 0 && !normal.is_zero_vec())
         return projection(tr_1, tr_2, 1, 2);
-    }
-    // Project onto plane XZ
-    else if (cmp::dbl_cmp(n_y, n_z) >= 0 && cmp::dbl_cmp(n_y, n_x) >= 0 && !normal.is_zero_vec()) {
 
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << "________________________ I M HERE XZ ______________________" << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
+    // Project onto plane XZ
+    else if (cmp::dbl_cmp(n_y, n_z) >= 0 && cmp::dbl_cmp(n_y, n_x) >= 0 && !normal.is_zero_vec())
         return projection(tr_1, tr_2, 0, 2);
-    }
+
     // Project onto plane XY
     return projection(tr_1, tr_2, 0, 1);
 }
@@ -225,13 +208,8 @@ bool determine_region(geometry::vector_t &p_1, std::array<int, 3> res, geometry:
     bool R1 = check_R1(res);
     bool R2 = check_R2(res);
     while(R1 != 1 && R2 != 1) {
-        std::cout << "im here" << std::endl;
         tr_2.circular_permutation();
-        std::cout << tr_2;
         res = check_relative_pos(p_1, tr_2);
-        for(auto v : res)
-            std::cout << v << " ";
-        std::cout << std::endl;
         R1 = check_R1(res);
         R2 = check_R2(res);   
     }
@@ -245,16 +223,12 @@ bool solution_R1(const geometry::triangle_t &tr_1, const geometry::triangle_t &t
     if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
         if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]), 0.0) >= 0) {
-                std::cout << "im here 1" << std::endl;
                 return 1;
             }
         }
         else {
             if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]), 0.0) >= 0) {
-                std::cout << "det 1 " << common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) << std::endl;
                 if(cmp::dbl_cmp(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]), 0.0) >= 0) {
-                    std::cout << "det 2 " << common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) << std::endl;
-                    std::cout << "im here 2" << std::endl;
                     return 1;
                 }
             }
@@ -264,11 +238,9 @@ bool solution_R1(const geometry::triangle_t &tr_1, const geometry::triangle_t &t
         if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
                 if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
-                    std::cout << "im here 3" << std::endl;
                     return 1;
                 }
                 if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
-                    std::cout << "im here 4" << std::endl;
                     return 1;
                 }
             }
@@ -343,7 +315,6 @@ bool intersection2D(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
         return intersection_degenerate(pr_tr_1, pr_tr_2);
     }
 
-    std::cout << "res: " << res[0] << ", " << res[1] << ", " << res[2] << std::endl;
     if(intersec_first_step2D(res))
         return true;
 
@@ -448,119 +419,5 @@ bool one_line_degenerates(const geometry::vector_t &p1, const geometry::vector_t
         return true;
     return false;
 }
-
-// // --- check if p is in ++- part +--
-// namespace {
-// bool check_R1(std::array<int, 3> res) {
-//     if(res[0] >= 0 && res[1] >= 0 && res[2] < 0)
-//         return true;
-//     return false;
-// }
-// bool check_R2(std::array<int, 3> res) {
-//     if(res[0] >= 0 && res[1] < 0 && res[2] < 0)
-//         return true;
-//     return false;
-// }
-
-// //анонимный
-// bool determine_region(const geometry::vector_t &p_1, const std::array<int, 3> res, const geometry::triangle_t &tr_2) {
-//     bool R1 = check_R1(res);
-//     bool R2 = check_R2(res);
-//     while(R1 != 1 && R2 != 1) {
-//         std::cout << "im here" << std::endl;
-//         tr_2.circular_permutation();
-//         std::cout << tr_2;
-//         res = check_relative_pos(p_1, tr_2);
-//         for(auto v : res)
-//             std::cout << v << " ";
-//         std::cout << std::endl;
-//         R1 = check_R1(res);
-//         R2 = check_R2(res);   
-//     }
-//     return R1;
-// }
-
-// bool solution_R1(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2){
-//     std::array<geometry::vector_t, 3> vrts_1{tr_1[0], tr_1[1], tr_1[2]}; // p1, q1, r1
-//     std::array<geometry::vector_t, 3> vrts_2{tr_2[0], tr_2[1], tr_2[2]}; // p2, q2, r2
-
-//     if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
-//         if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
-//             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[1], vrts_2[2]), 0.0) >= 0) {
-//                 std::cout << "im here 1" << std::endl;
-//                 return 1;
-//             }
-//         }
-//         else {
-//             if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]), 0.0) >= 0) {
-//                 std::cout << "det 1 " << common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]) << std::endl;
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]), 0.0) >= 0) {
-//                     std::cout << "det 2 " << common::calc_det(vrts_1[2], vrts_1[0], vrts_2[0]) << std::endl;
-//                     std::cout << "im here 2" << std::endl;
-//                     return 1;
-//                 }
-//             }
-//         }
-//     }
-//     else {
-//         if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
-//             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
-//                     std::cout << "im here 3" << std::endl;
-//                     return 1;
-//                 }
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
-//                     std::cout << "im here 4" << std::endl;
-//                     return 1;
-//                 }
-//             }
-//         }
-//     }
-//     return 0;    
-// }
-
-// bool solution_R2(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2){
-//     std::array<geometry::vector_t, 3> vrts_1{tr_1[0], tr_1[1], tr_1[2]}; // p1, q1, r1
-//     std::array<geometry::vector_t, 3> vrts_2{tr_2[0], tr_2[1], tr_2[2]}; // p2, q2, r2
-
-//     if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[1]), 0.0) >= 0) {
-//         if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[1]), 0.0) <= 0) {
-//             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[1]), 0.0) > 0) {
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]), 0.0) <= 0)
-//                     return 1;
-//             }
-//             else {
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
-//                     if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[0]), 0.0) >= 0)
-//                         return 1;
-//                 }
-//             }
-//         }
-//         else {
-//             if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[1], vrts_1[1]), 0.0) <= 0) {
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[1], vrts_1[2]), 0.0) <= 0) {
-//                     if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]), 0.0) >= 0)
-//                         return 1;
-//                 }
-//             }
-//         }
-//     }
-//     else {
-//         if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_2[0], vrts_1[2]), 0.0) >= 0) {
-//             if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[2]), 0.0) >= 0) {
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[0], vrts_2[0], vrts_1[2]), 0.0) >= 0)
-//                     return 1;
-//             }
-//             else {
-//                 if(cmp::dbl_cmp(common::calc_det(vrts_1[1], vrts_1[2], vrts_2[1]), 0.0) >= 0) {
-//                     if(cmp::dbl_cmp(common::calc_det(vrts_2[2], vrts_1[2], vrts_2[1]), 0.0) >= 0)
-//                         return 1;
-//                 }
-//             }
-//         }
-//     }
-//     return 0;
-// }
-// }
 
 } //namespace intersection

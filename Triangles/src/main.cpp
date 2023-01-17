@@ -18,7 +18,6 @@ int main() {
 	/// -------- TESTING PRIMITIVES ------------------///
 	/////////////////////////////////////////////////////
 	struct geometry::vector_t vec1{};
-	std::cout << vec1.coords_[1] << std::endl;
 
 	struct geometry::vector_t vec2{0, 1, 0};
 	struct geometry::vector_t vec3{0, 0, 1};
@@ -34,10 +33,6 @@ int main() {
 	struct geometry::vector_t vec9{5, 3, 3};
 	struct geometry::vector_t vec10{4, 1, 7};
 	struct geometry::vector_t vec11{6, 9, 10};
-
-	std::cout << vec2 << std::endl;
-
-	std::cout << (unsigned)vec3.relative_pos(vec2) << std::endl;
 
 	geometry::triangle_t triangl1(vec1, vec2, vec3);
 	geometry::triangle_t triangl2(vec4, vec5, vec6);
