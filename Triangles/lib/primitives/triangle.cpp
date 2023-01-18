@@ -6,8 +6,6 @@ size_t triangle_t::get_nvertex() const {
     return vertices_.size();
 }
 
-
-//TODO: triangle is a struct now! no need for getters
 std::ostream& operator<<(std::ostream &out, const triangle_t &triangle) {
     return out  << "[" << triangle[0] << "; " << triangle[1] << "; " << triangle[2] << "]" << std::endl;
 }
@@ -18,14 +16,14 @@ std::istream& operator>>(std::istream &in, triangle_t &triangle) {
 //-----------------------------------------------//
 //---------- FUNCTIONS FOR 3D INTERSECTION ------//
 //-----------------------------------------------//
+
+//moving p point to 0 position
 void triangle_t::circular_permutation(const std::array<int, 3> res, int sign){
     if(res[0] == sign)
         return;
-    std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
-    if(res[1] == sign)
-        std::swap(vertices_[0], vertices_[1]);
-    else
-        std::swap(vertices_[1], vertices_[2]);
+    std::swap(vertices_[0], vertices_[2]);
+    int a = (res[1] != sign);
+    std::swap(vertices_[0 + a], vertices_[1 + a]);
 }
 
 void triangle_t::set_p(const std::array<int, 3> res, int sum) {
@@ -44,8 +42,6 @@ void triangle_t::swap_qr() {
 //---------- FUNCTIONS FOR 2D INTERSECTION ------//
 //-----------------------------------------------//
 
-
-//calc det??
 void triangle_t::counter_clock() {
     double det = common::calc_det(vertices_[0], vertices_[1], vertices_[2]);
     if(cmp::dbl_cmp(det, 0.0) < 0)
@@ -54,7 +50,7 @@ void triangle_t::counter_clock() {
 
 //moving p_1 to ++- or to +-- part with circular permutation of T2
 void triangle_t::circular_permutation(){
-    std::swap(vertices_[0], vertices_[2]);   //циклическая перестановка, чтобы вывести p на нулевую позицию
+    std::swap(vertices_[0], vertices_[2]);
     std::swap(vertices_[1], vertices_[2]);
 }
 
@@ -62,7 +58,6 @@ void swap(triangle_t &first, triangle_t &second) {
     std::swap(first.vertices_[0], second.vertices_[0]);
     std::swap(first.vertices_[1], second.vertices_[1]);
     std::swap(first.vertices_[2], second.vertices_[2]);
-    std::cout << "im here swap" << std::endl;
 }
 
 //--------------------------------------------------------//
