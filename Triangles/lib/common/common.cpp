@@ -13,38 +13,26 @@ namespace common {
 //                |d_x  d_y  d_z  1|
 //------------------------------------------------//
 
-std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
-    geometry::vector_t new_vec_1 = vec_1 - vec_3;
-    geometry::vector_t new_vec_2 = vec_2 - vec_3;
-    return {new_vec_1[0], new_vec_1[1],
-            new_vec_2[0], new_vec_2[1]};
-}
-std::vector<double> vec_to_matrix(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4) {
-    geometry::vector_t new_vec_1 = vec_1 - vec_4;
-    geometry::vector_t new_vec_2 = vec_2 - vec_4;
-    geometry::vector_t new_vec_3 = vec_3 - vec_4;
-    return {new_vec_1[0], new_vec_1[1], new_vec_1[2],
-            new_vec_2[0], new_vec_2[1], new_vec_2[2],
-            new_vec_3[0], new_vec_3[1], new_vec_3[2]};
-}
+
 
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3) {
     geometry::vector_t new_vec_1 = vec_1 - vec_3;
     geometry::vector_t new_vec_2 = vec_2 - vec_3;
-    //std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3);
     return new_vec_1[0] * new_vec_2[1] - new_vec_1[1] * new_vec_2[0];
 }
 double calc_det(const geometry::vector_t &vec_1, const geometry::vector_t &vec_2, const geometry::vector_t &vec_3, const geometry::vector_t &vec_4) {
-    std::vector<double> m = vec_to_matrix(vec_1, vec_2, vec_3, vec_4);
-    double m_0 = m[0];
-    double m_1 = m[1];
-    double m_2 = m[2];
-    double m_3 = m[3];
-    double m_4 = m[4];
-    double m_5 = m[5];
-    double m_6 = m[6];
-    double m_7 = m[7];
-    double m_8 = m[8];
+    geometry::vector_t new_vec_1 = vec_1 - vec_4;
+    geometry::vector_t new_vec_2 = vec_2 - vec_4;
+    geometry::vector_t new_vec_3 = vec_3 - vec_4;
+    double m_0 = new_vec_1[0];
+    double m_1 = new_vec_1[1];
+    double m_2 = new_vec_1[2];
+    double m_3 = new_vec_2[0];
+    double m_4 = new_vec_2[1];
+    double m_5 = new_vec_2[2];
+    double m_6 = new_vec_3[0];
+    double m_7 = new_vec_3[1];
+    double m_8 = new_vec_3[2];
     return m_0 * m_4 * m_8 +
         m_1 * m_5 * m_6 +
         m_2 * m_3 * m_7 -

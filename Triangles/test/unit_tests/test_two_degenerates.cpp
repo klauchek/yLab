@@ -96,6 +96,26 @@ TEST(test_deg, segments_parallel) {
     EXPECT_FALSE(res_intersec);
 }
 
+
+TEST(test_deg, segments_parallel_2) {
+    //1 tr
+    struct geometry::vector_t vec10{1, 1, 1};
+    struct geometry::vector_t vec11{2, 2, 2};
+    struct geometry::vector_t vec12{3, 3, 3};
+    //2 tr
+    struct geometry::vector_t vec20{1, 1, 0};
+    struct geometry::vector_t vec21{2, 2, 0};
+    struct geometry::vector_t vec22{3, 3, 0};
+
+    geometry::triangle_t triangle_1(vec10, vec11, vec12);
+    geometry::triangle_t triangle_2(vec20, vec21, vec22);
+
+    bool res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_FALSE(res_intersec);
+}
+
 TEST(test_deg, segments_on_one_line) {
     //1 tr
     struct geometry::vector_t vec10{0, 0, 0};
