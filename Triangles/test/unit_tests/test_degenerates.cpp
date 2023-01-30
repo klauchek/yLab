@@ -117,6 +117,26 @@ TEST(test_2D_deg, seg_triag_without_intersec_2D_3) {
     EXPECT_FALSE(res_intersec);
 }
 
+TEST(test_2D_deg, seg_triag_without_intersec_2D_4) {
+    //the segment lies on the extension of the edge of the triangle
+    //1 tr
+    struct geometry::vector_t vec10{-5.12, 2.37, -4.74};
+    struct geometry::vector_t vec11{-2.75, 1.29, 0};
+    struct geometry::vector_t vec12{-5.32, 1.11, 0};
+    //2 tr
+    struct geometry::vector_t vec20{1.2, 1.84, -1};
+    struct geometry::vector_t vec21{1.55, 1.6, 0};
+    struct geometry::vector_t vec22{1.55, 1.6, 0};
+
+    geometry::triangle_t triangle_1(vec10, vec11, vec12);
+    geometry::triangle_t triangle_2(vec20, vec21, vec22);
+
+    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec);
+}
+
 TEST(test_2D_deg, seg_triag_edge_intersec_2D) {
     //1 tr
     struct geometry::vector_t vec10{0, 0, 0};

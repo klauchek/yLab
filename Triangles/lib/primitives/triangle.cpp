@@ -54,6 +54,13 @@ void triangle_t::circular_permutation(){
     std::swap(vertices_[1], vertices_[2]);
 }
 
+void triangle_t::coords_circular_permutation(){
+    for(int i = 0; i < 3; ++i) {
+        std::swap(vertices_[i][0], vertices_[i][2]);
+        std::swap(vertices_[i][1], vertices_[i][2]);
+    }
+}
+
 void swap(triangle_t &first, triangle_t &second) {
     std::swap(first.vertices_[0], second.vertices_[0]);
     std::swap(first.vertices_[1], second.vertices_[1]);
@@ -84,6 +91,5 @@ void triangle_t::line_counter_clock() {
     }
 
 }
-
 
 }

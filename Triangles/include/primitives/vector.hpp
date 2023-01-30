@@ -9,7 +9,7 @@
 namespace geometry {
 using point_t = double;
 
-struct vector_t {
+struct vector_t final {
   
   std::array<point_t, 3> coords_;
 

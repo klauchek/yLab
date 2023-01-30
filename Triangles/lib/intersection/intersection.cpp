@@ -58,11 +58,11 @@ bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
     int sum_2 = std::accumulate(res_2.begin(), res_2.end(), 0);
 
     if(std::abs(sum_1) == 3 || std::abs(sum_2) == 3) {
-        std::cout << "No intersection possible!" << std::endl;
+        //std::cout << "No intersection possible!" << std::endl;
         return false;
     }
     if(sum_1 == 0 && sum_2 == 0) {
-        std::cout << "We have 2D intersection!" << std::endl;
+        //std::cout << "We have 2D intersection!" << std::endl;
         return intersection2D(tr_1, tr_2);
     }
 
@@ -153,77 +153,63 @@ std::pair<geometry::triangle_t, geometry::triangle_t> projection(const geometry:
     tmp_tr_2.vertices_[1].coords_[axe] = 0;
     tmp_tr_2.vertices_[2].coords_[axe] = 0;
 
-    std::cout << tmp_tr_1 << tmp_tr_2 << std::endl;
+    //basis transformation to XY
+    if(axe == 0) {
+        tmp_tr_1.coords_circular_permutation();
+        tmp_tr_1.coords_circular_permutation();
+
+        tmp_tr_2.coords_circular_permutation();
+        tmp_tr_2.coords_circular_permutation();
+    }
+    if(axe == 1) {
+        tmp_tr_1.coords_circular_permutation();
+        tmp_tr_2.coords_circular_permutation();
+    }
 
     return {std::move(tmp_tr_1), std::move(tmp_tr_2)};
 }
 
 std::pair<geometry::triangle_t, geometry::triangle_t> project_coplanar(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2) {
-
     geometry::vector_t normal_1 = geometry::cross_product(tr_1[0] - tr_1[1], tr_1[0] - tr_1[2]);
-    geometry::vector_t normal_2 = geometry::cross_product(tr_2[0] - tr_2[1], tr_2[0] - tr_2[2]);
     double n_x, n_y, n_z;
 
     n_x = std::abs(normal_1[0]);
     n_y = std::abs(normal_1[1]);
     n_z = std::abs(normal_1[2]);
 
-    std::cout << n_x << " " << n_y << n_z << std::endl;
-    if(normal_1.is_zero_vec() && normal_2.is_zero_vec())
-        return {tr_1, tr_2};
-
     //Projection of the triangles in 3D onto 2D such that the area of the projection is maximized
-    // Project onto plane YZ
+    //and then moving projections to XY plane
+
+    // For plane YZ
     if (cmp::dbl_cmp(n_x, n_z) > 0 && cmp::dbl_cmp(n_x, n_y) >= 0 && !normal_1.is_zero_vec()) {
-        std::cout << "________YZ__________" << std::endl;
         return projection(tr_1, tr_2, 1, 2);
     }
 
-    // Project onto plane XZ
+    // For plane XZ
     else if (cmp::dbl_cmp(n_y, n_z) > 0 && cmp::dbl_cmp(n_y, n_x) >= 0 && !normal_1.is_zero_vec()){
-        std::cout << "________XZ__________" << std::endl;
         return projection(tr_1, tr_2, 0, 2);
     }
 
-    // Project onto plane XY
+    // For plane XY
     return projection(tr_1, tr_2, 0, 1);
 }
 
 
 namespace {
 
-bool intersec_first_step2D(const std::array<int, 3> res) {
-    int num_zeros = std::count(res.begin(), res.end(), 0);
-    int num_ones = std::count(res.begin(), res.end(), 1);
-    if(num_ones == 3) {
-        std::cout << "p1 is in T2!" << std::endl;
-        return true;
-    }
-    if(num_zeros == 2) {
-        std::cout << "p1 is on the vertex of T2!" << std::endl;
-        return true;
-    }
-    if(num_zeros == 1 && num_ones == 2) {
-        std::cout << "p1 is on the edge of T2!" << std::endl;
-        return true;
-    }
-    return false;
-}
-
 // --- check if p is in ++- part +--
 bool check_R1(const std::array<int, 3> res) {
-    if(res[0] >= 0 && res[1] >= 0 && res[2] < 0)
+    if(res[0] > 0 && res[1] > 0 && res[2] == 0)
         return true;
     return false;
 }
 bool check_R2(const std::array<int, 3> res) {
-    if(res[0] >= 0 && res[1] < 0 && res[2] < 0)
+    if(res[0] > 0 && res[1] == 0 && res[2] == 0)
         return true;
     return false;
 }
 
 bool determine_region(geometry::vector_t &p_1, std::array<int, 3> res, geometry::triangle_t &tr_2) {
-
     bool R1 = check_R1(res);
     bool R2 = check_R2(res);
     while(R1 != 1 && R2 != 1) {
@@ -235,7 +221,7 @@ bool determine_region(geometry::vector_t &p_1, std::array<int, 3> res, geometry:
     return R1;
 }
 
-bool solution_R1(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2){
+bool solution_edge_intersec(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2){
     std::array<geometry::vector_t, 3> vrts_1{tr_1[0], tr_1[1], tr_1[2]}; // p1, q1, r1
     std::array<geometry::vector_t, 3> vrts_2{tr_2[0], tr_2[1], tr_2[2]}; // p2, q2, r2
 
@@ -268,7 +254,7 @@ bool solution_R1(const geometry::triangle_t &tr_1, const geometry::triangle_t &t
     return 0;    
 }
 
-bool solution_R2(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2){
+bool solution_vertex_intersec(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2){
     std::array<geometry::vector_t, 3> vrts_1{tr_1[0], tr_1[1], tr_1[2]}; // p1, q1, r1
     std::array<geometry::vector_t, 3> vrts_2{tr_2[0], tr_2[1], tr_2[2]}; // p2, q2, r2
 
@@ -313,31 +299,33 @@ bool solution_R2(const geometry::triangle_t &tr_1, const geometry::triangle_t &t
 }
 
 bool intersection2D(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
-    tr_1.counter_clock();
-    tr_2.counter_clock();
+    geometry::vector_t normal_1 = geometry::cross_product(tr_1[0] - tr_1[1], tr_1[0] - tr_1[2]);
+    geometry::vector_t normal_2 = geometry::cross_product(tr_2[0] - tr_2[1], tr_2[0] - tr_2[2]);
+
+    if(normal_1.is_zero_vec() && normal_2.is_zero_vec())
+        return intersection_degenerate(tr_1, tr_2);
+    
+    if(!normal_1.is_zero_vec() && normal_2.is_zero_vec())
+        return intersection_triangle_degenerate(tr_2, tr_1);
+    
+    if(normal_1.is_zero_vec() && !normal_2.is_zero_vec())
+        return intersection_triangle_degenerate(tr_1, tr_2);
 
     auto projections = project_coplanar(tr_1, tr_2);
 
     geometry::triangle_t pr_tr_1 = std::move(projections.first);
     geometry::triangle_t pr_tr_2 = std::move(projections.second);
+
+    pr_tr_1.counter_clock();
+    pr_tr_2.counter_clock();
     
     geometry::vector_t p_1 = pr_tr_1[0];
     std::array<int, 3> res = check_relative_pos(p_1, pr_tr_2);
 
-    if(std::count(res.begin(), res.end(), 0) == 3) {
-        geometry::swap(pr_tr_1, pr_tr_2);
-        p_1 = pr_tr_1[0];
-        res = check_relative_pos(p_1, pr_tr_2);
-    }
-
-    if(std::count(res.begin(), res.end(), 0) == 3) {
-        std::cout << "Two degenerates intersection" << std::endl;
-        return intersection_degenerate(pr_tr_1, pr_tr_2);
-    }
-
-    if(intersec_first_step2D(res))
+    if(std::count(res.begin(), res.end(), 1) == 3) {
+        //std::cout << "p1 is in T2!" << std::endl;
         return true;
-
+    }
     //other cases - moving p_1 to ++- or to +-- part with circular permutation of T2
     // + means det >= 0; - means det < 0;
     // [p1, p2, q2]
@@ -345,12 +333,12 @@ bool intersection2D(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
     // [p1, r2, p2]
 
     if(determine_region(p_1, res, pr_tr_2)) {
-        std::cout << "We go to R1! - edge intersection" << std::endl;
-        return solution_R1(pr_tr_1, pr_tr_2);
+        //std::cout << "We go to R1! - edge intersection" << std::endl;
+        return solution_edge_intersec(pr_tr_1, pr_tr_2);
     }
     else {
-        std::cout << "We go to R2! - vertex intersection" << std::endl;
-        return solution_R2(pr_tr_1, pr_tr_2);
+        //std::cout << "We go to R2! - vertex intersection" << std::endl;
+        return solution_vertex_intersec(pr_tr_1, pr_tr_2);
     }
 
     return false;
@@ -361,20 +349,37 @@ std::array<int, 3> check_relative_pos(const geometry::vector_t &p_1, const geome
 
     for(size_t i = 0; i < 3; ++i) {
         double det = common::calc_det(p_1, tr_2[i], tr_2[(i + 1) % 3]);
-        res_arr[i] = cmp::dbl_cmp(det, 0.0);
+        res_arr[i] = cmp::dbl_cmp(det, 0.0) >= 0;
     }
-    std::cout << "last det: " << common::calc_det(p_1, tr_2[2], tr_2[(2 + 1) % 3]) << " ";
     return res_arr; 
 }
 
+bool intersection_triangle_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
+    tr_1.line_counter_clock();
+
+    geometry::triangle_t side_1(tr_2[0], tr_2[0], tr_2[1]);
+    geometry::triangle_t side_2(tr_2[0], tr_2[0], tr_2[2]);
+    geometry::triangle_t side_3(tr_2[1], tr_2[1], tr_2[2]);
+
+    side_1.line_counter_clock();
+    side_2.line_counter_clock();
+    side_3.line_counter_clock();
+
+    return (intersection_degenerate(tr_1, side_1) ||
+        intersection_degenerate(tr_1, side_2) ||
+        intersection_degenerate(tr_1, side_3) ||
+        point_in_triangle(tr_1[0], tr_2) ||
+        point_in_triangle(tr_1[2], tr_2));
+    
+}
 bool intersection_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
     tr_1.line_counter_clock();
     tr_2.line_counter_clock();
 
-    geometry::vector_t p1 = tr_1.vertices_[0];
-    geometry::vector_t r1 = tr_1.vertices_[2];
-    geometry::vector_t p2 = tr_2.vertices_[0];
-    geometry::vector_t r2 = tr_2.vertices_[2];
+    geometry::vector_t p1 = tr_1[0];
+    geometry::vector_t r1 = tr_1[2];
+    geometry::vector_t p2 = tr_2[0];
+    geometry::vector_t r2 = tr_2[2];
 
     double det_1 = common::calc_det(p1, p2, r1);
     double det_2 = common::calc_det(p1, r2, r1);
@@ -384,7 +389,7 @@ bool intersection_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_
     if(det_signs_comp(det_1, det_2) || det_signs_comp(det_3, det_4))
         return false;
     if(cmp::dbl_cmp(std::abs(det_1) + std::abs(det_2) + std::abs(det_3) + std::abs(det_4), 0.0) == 0) {
-        std::cout << "Line degenerates" << std::endl;
+        //std::cout << "Line degenerates" << std::endl;
         return one_line_degenerates(p1, r1, p2, r2);
     }
     return true;
@@ -404,12 +409,10 @@ bool one_line_degenerates(const geometry::vector_t &p1, const geometry::vector_t
     double r1r2 = geometry::length(r1, r2);
     double p2r2 = geometry::length(p2, r2);
 
-    if((cmp::dbl_cmp(p2r1 + p1p2, p1r1) == 0) ||
+    return ((cmp::dbl_cmp(p2r1 + p1p2, p1r1) == 0) ||
         (cmp::dbl_cmp(r1r2 + p1r2, p1r1) == 0) ||
         (cmp::dbl_cmp(p1p2 + p1r2, p2r2) == 0) ||
-        (cmp::dbl_cmp(r1r2 + p2r1, p2r2) == 0))
-        return true;
-    return false;
+        (cmp::dbl_cmp(r1r2 + p2r1, p2r2) == 0));
 }
 
 } //namespace intersection

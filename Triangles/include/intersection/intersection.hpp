@@ -25,6 +25,7 @@ std::pair<geometry::triangle_t, geometry::triangle_t> project_coplanar(const geo
 bool intersection2D(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
 
 //------------------ DEGENERATE INTERSECTION ---------------//
+bool intersection_triangle_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
 bool intersection_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
 bool one_line_degenerates(const geometry::vector_t &p1, const geometry::vector_t &r1, const geometry::vector_t &p2, const geometry::vector_t &r2);
 

@@ -135,10 +135,12 @@ public:
             }
         }
     }
+
+    virtual ~octree_node_t() = default;
 };
 
 template <typename Obj>
-class octree_t {
+class octree_t final{
     std::unique_ptr<octree_node_t<Obj>, typename octree_node_t<Obj>::octree_node_deleter> root_;
     geometry::vector_t define_right(std::list<Obj>& objs){
         double max = 0.0;
@@ -195,12 +197,6 @@ public:
             for (auto obj_it_1 = cur->objects_.begin(); obj_it_1 != std::prev(cur->objects_.end()); obj_it_1 = std::next(obj_it_1)) {
                 for (auto obj_it_2 = std::next(obj_it_1); obj_it_2 != cur->objects_.end(); obj_it_2 = std::next(obj_it_2))
                     insert_intersected(*obj_it_1, *obj_it_2, intersected);
-                //     bool res_intersec = intersection::intersection(*obj_it_1, *obj_it_2);
-                //     if(res_intersec) {
-                //         intersected.insert(obj_it_1->name);
-                //         intersected.insert(obj_it_2->name);
-                //     }
-                // }
             }
             //intersection between objs from one node with objs from parents
             auto* parent = cur->get_parent();
@@ -208,12 +204,6 @@ public:
                 for(auto obj : cur->objects_) {
                     for(auto parent_obj : parent->objects_)
                         insert_intersected(obj, parent_obj, intersected);
-                    //     bool res_intersec = intersection::intersection(obj, parent_obj);
-                    //     if(res_intersec) {
-                    //         intersected.insert(obj.name);
-                    //         intersected.insert(parent_obj.name);
-                    //     }
-                    // }
                 }
                 parent = parent->get_parent();
             }
@@ -221,8 +211,8 @@ public:
         std::cout << "Intersected triangles: " << intersected.size() << std::endl;
         std::vector<int> v_intersected(intersected.begin(), intersected.end());
         std::sort(v_intersected.begin(), v_intersected.end());
-        for(auto v : v_intersected)
-           std::cout << v << " ";
+        //for(auto v : v_intersected)
+        //   std::cout << v << " ";
     }
 
 };

@@ -7,7 +7,7 @@
 
 namespace geometry {
 
-struct triangle_t {
+struct triangle_t final {
 
     std::array<vector_t, 3> vertices_;
     int name = -1;
@@ -20,6 +20,7 @@ struct triangle_t {
     const vector_t &operator[](int num) const { return vertices_[num]; }
     void circular_permutation(const std::array<int, 3> res, int sign);
     void circular_permutation();
+    void coords_circular_permutation();
     void counter_clock();
     void set_p(const std::array<int, 3> res, int sum);
     void swap_qr();
