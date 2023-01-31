@@ -25,8 +25,8 @@ int main() {
 //auto begin = std::chrono::high_resolution_clock::now();
 	octree::octree_t<geometry::triangle_t> tree (std::move(triangle_list));
 	tree.intersector();
-// auto end = std::chrono::high_resolution_clock::now();
-// std::cout << std::endl;
-// std::cout << "------- TIME ---------" << std::endl;
-// std::cout << std::chrono::duration_cast <std::chrono::milliseconds>(end - begin).count()<< " " << std::endl;
+//auto end = std::chrono::high_resolution_clock::now();
+//std::cout << std::endl;
+//std::cout << "------- TIME ---------" << std::endl;
+//std::cout << std::chrono::duration_cast <std::chrono::milliseconds>(end - begin).count()<< " " << std::endl;
 }

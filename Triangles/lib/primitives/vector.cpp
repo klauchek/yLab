@@ -74,7 +74,7 @@ std::istream& operator>>(std::istream &in, vector_t &vec) {
 namespace cmp {
 
 int dbl_cmp(const double x, const double y) {
-    const double epsilon = 10E-6;
+    const double epsilon = 10E-15;
 
     if (std::abs(x - y) < epsilon)
         return 0;

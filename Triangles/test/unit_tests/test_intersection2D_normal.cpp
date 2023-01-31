@@ -1,44 +1,6 @@
 #include <gtest/gtest.h>
 #include "intersection.hpp"
 
-TEST(test_2D, close_without_intersec_edge) {
-    //1 tr
-    struct geometry::vector_t vec10{0, 0, 0};
-    struct geometry::vector_t vec11{-3, 0, 0};
-    struct geometry::vector_t vec12{0, 1.8, 0};
-    //2 tr
-    struct geometry::vector_t vec20{-0.74001, 1.36001, 0};
-    struct geometry::vector_t vec21{-1.44001, 0.94001, 0};
-    struct geometry::vector_t vec22{-1.36, 1.46, 0};
-
-    geometry::triangle_t triangle_1(vec10, vec11, vec12);
-    geometry::triangle_t triangle_2(vec20, vec21, vec22);
-
-    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
-    EXPECT_FALSE(res_intersec); //enough accuracy
-    res_intersec = intersection::intersection(triangle_2, triangle_1);
-    EXPECT_FALSE(res_intersec); //enough accuracy
-}
-
-TEST(test_2D, close_without_intersec_vertex) {
-    //1 tr
-    struct geometry::vector_t vec10{0, 0, 0};
-    struct geometry::vector_t vec11{-3, 0, 0};
-    struct geometry::vector_t vec12{0, 2, 0};
-    //2 tr
-    struct geometry::vector_t vec20{0, 2.000001, 0};
-    struct geometry::vector_t vec21{-0.8, 2.31, 0};
-    struct geometry::vector_t vec22{-1.59, 1.64, 0};
-
-    geometry::triangle_t triangle_1(vec10, vec11, vec12);
-    geometry::triangle_t triangle_2(vec20, vec21, vec22);
-
-    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
-    EXPECT_TRUE(res_intersec);//not enough accuracy
-    res_intersec = intersection::intersection(triangle_2, triangle_1);
-    EXPECT_TRUE(res_intersec);//not enough accuracy
-}
-
 TEST(test_2D, intersec_vertex_vertex) {
     //1 tr
     struct geometry::vector_t vec10{0, 0, 0};

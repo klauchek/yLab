@@ -10,7 +10,7 @@ std::ostream& operator<<(std::ostream &out, const triangle_t &triangle) {
     return out  << "[" << triangle[0] << "; " << triangle[1] << "; " << triangle[2] << "]" << std::endl;
 }
 std::istream& operator>>(std::istream &in, triangle_t &triangle) {
-    return in  >> triangle.vertices_[0] >> triangle.vertices_[1] >> triangle.vertices_[2];
+    return in  >> triangle[0] >> triangle[1] >> triangle[2];
 }
 
 //-----------------------------------------------//
@@ -62,9 +62,9 @@ void triangle_t::coords_circular_permutation(){
 }
 
 void swap(triangle_t &first, triangle_t &second) {
-    std::swap(first.vertices_[0], second.vertices_[0]);
-    std::swap(first.vertices_[1], second.vertices_[1]);
-    std::swap(first.vertices_[2], second.vertices_[2]);
+    std::swap(first[0], second[0]);
+    std::swap(first[1], second[1]);
+    std::swap(first[2], second[2]);
 }
 
 //--------------------------------------------------------//

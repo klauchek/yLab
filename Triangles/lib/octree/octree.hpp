@@ -211,8 +211,8 @@ public:
         std::cout << "Intersected triangles: " << intersected.size() << std::endl;
         std::vector<int> v_intersected(intersected.begin(), intersected.end());
         std::sort(v_intersected.begin(), v_intersected.end());
-        //for(auto v : v_intersected)
-        //   std::cout << v << " ";
+        for(auto v : v_intersected)
+           std::cout << v << " ";
     }
 
 };

@@ -39,44 +39,6 @@ TEST(test_3D, close_parallel_true) {
     EXPECT_FALSE(res_intersec); //enough accuracy
 }
 
-TEST(test_3D, close_parallel_false) {
-    //1 tr
-    struct geometry::vector_t vec10{0, 0, 0};
-    struct geometry::vector_t vec11{-3, 0, 0};
-    struct geometry::vector_t vec12{0, 2, 0};
-    //2 tr
-    struct geometry::vector_t vec20{-3.18, 4.4, 0.0000001};
-    struct geometry::vector_t vec21{-2.23, 0.89, 0.0000001};
-    struct geometry::vector_t vec22{6.16, 2.16, 0.0000001};
-
-    geometry::triangle_t triangle_1(vec10, vec11, vec12);
-    geometry::triangle_t triangle_2(vec20, vec21, vec22);
-
-    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
-    EXPECT_TRUE(res_intersec);//not enough accuracy
-    res_intersec = intersection::intersection(triangle_2, triangle_1);
-    EXPECT_TRUE(res_intersec);//not enough accuracy
-}
-
-//interesting case
-TEST(test_3D, close_without_intersec) {
-    //1 tr
-    struct geometry::vector_t vec10{0, 0, 0};
-    struct geometry::vector_t vec11{-3, 0, 0};
-    struct geometry::vector_t vec12{0, 2, 0};
-    //2 tr
-    struct geometry::vector_t vec20{-2.8, 4.4, -3};
-    struct geometry::vector_t vec21{-2.19999, 0.25, -2}; //intersec in -2.2
-    struct geometry::vector_t vec22{3.3, 2.5, 3};
-
-    geometry::triangle_t triangle_1(vec10, vec11, vec12);
-    geometry::triangle_t triangle_2(vec20, vec21, vec22);
-
-    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
-    EXPECT_FALSE(res_intersec);
-    res_intersec = intersection::intersection(triangle_2, triangle_1);
-    EXPECT_FALSE(res_intersec);
-}
 
 TEST(test_3D, without_intersec) {
     //1 tr

@@ -36,16 +36,16 @@ bool determine_side(const geometry::vector_t &point, const geometry::vector_t &a
 }
 
 bool point_in_triangle(const geometry::vector_t &point, const geometry::triangle_t &tr) {
-    geometry::vector_t a = tr.vertices_[0];
-    geometry::vector_t b = tr.vertices_[1];
-    geometry::vector_t c = tr.vertices_[2];
+    geometry::vector_t a = tr[0];
+    geometry::vector_t b = tr[1];
+    geometry::vector_t c = tr[2];
     return (determine_side(point, a, b, c) && determine_side(point, b, a, c) && determine_side(point, c, a, b));
 }
 
 bool one_common_point_3D(const std::array<int, 3> res, const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2) {
     auto elem = std::find(res.begin(), res.end(), 0);
     size_t idx = std::distance(res.begin(), elem);
-    geometry::vector_t point = tr_1.vertices_[idx];
+    geometry::vector_t point = tr_1[idx];
     return point_in_triangle(point, tr_2); 
 }
 //-----------------------------------------------------//
@@ -77,10 +77,7 @@ bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
     std::array<geometry::vector_t, 3> vertices_1{tr_1[0], tr_1[1], tr_1[2]};
     std::array<geometry::vector_t, 3> vertices_2{tr_2[0], tr_2[1], tr_2[2]};
 
-    if(cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[1], vertices_2[0]), 0.0) >= 0 
-        && cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0) <= 0)
-            return true;
-    return false;
+    return (cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0) <= 0);
 }
 
 void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> res_1, int sum_1) {
@@ -117,41 +114,35 @@ std::pair<geometry::triangle_t, geometry::triangle_t> projection(const geometry:
     size_t idx_4 = (idx_2 + idx_2 * idx_1) % 3;
     size_t axe = (idx_1 + idx_2 + idx_3 + idx_4) % 3;
 
-    //std::cout << "axes " << axe_1 << " " << axe_2 << std::endl;
-
     if(axe != 2) {
         //p1
-        tmp_tr_1.vertices_[0].coords_[idx_1] = tr_1.vertices_[1].coords_[idx_3];
-        tmp_tr_1.vertices_[0].coords_[idx_2] = tr_1.vertices_[1].coords_[idx_4];
+        tmp_tr_1[0][idx_1] = tr_1[1][idx_3];
+        tmp_tr_1[0][idx_2] = tr_1[1][idx_4];
         //q1
-        tmp_tr_1.vertices_[1].coords_[idx_1] = tr_1.vertices_[0].coords_[idx_3];
-        tmp_tr_1.vertices_[1].coords_[idx_2] = tr_1.vertices_[0].coords_[idx_4];
+        tmp_tr_1[1][idx_1] = tr_1[0][idx_3];
+        tmp_tr_1[1][idx_2] = tr_1[0][idx_4];
         //r1
-        tmp_tr_1.vertices_[2].coords_[idx_1] = tr_1.vertices_[2].coords_[idx_3];
-        tmp_tr_1.vertices_[2].coords_[idx_2] = tr_1.vertices_[2].coords_[idx_4];
+        tmp_tr_1[2][idx_1] = tr_1[2][idx_3];
+        tmp_tr_1[2][idx_2] = tr_1[2][idx_4];
 
         //p2
-        tmp_tr_2.vertices_[0].coords_[idx_1] = tr_2.vertices_[1].coords_[idx_3];
-        tmp_tr_2.vertices_[0].coords_[idx_2] = tr_2.vertices_[1].coords_[idx_4];
+        tmp_tr_2[0][idx_1] = tr_2[1][idx_3];
+        tmp_tr_2[0][idx_2] = tr_2[1][idx_4];
         //q2
-        tmp_tr_2.vertices_[1].coords_[idx_1] = tr_2.vertices_[0].coords_[idx_3];
-        tmp_tr_2.vertices_[1].coords_[idx_2] = tr_2.vertices_[0].coords_[idx_4];
+        tmp_tr_2[1][idx_1] = tr_2[0][idx_3];
+        tmp_tr_2[1][idx_2] = tr_2[0][idx_4];
         //r2
-        tmp_tr_2.vertices_[2].coords_[idx_1] = tr_2.vertices_[2].coords_[idx_3];
-        tmp_tr_2.vertices_[2].coords_[idx_2] = tr_2.vertices_[2].coords_[idx_4];
+        tmp_tr_2[2][idx_1] = tr_2[2][idx_3];
+        tmp_tr_2[2][idx_2] = tr_2[2][idx_4];
     }
     else {
         tmp_tr_1 = tr_1;
         tmp_tr_2 = tr_2;
     }
-    
-    tmp_tr_1.vertices_[0].coords_[axe] = 0;
-    tmp_tr_1.vertices_[1].coords_[axe] = 0;
-    tmp_tr_1.vertices_[2].coords_[axe] = 0;
-
-    tmp_tr_2.vertices_[0].coords_[axe] = 0;
-    tmp_tr_2.vertices_[1].coords_[axe] = 0;
-    tmp_tr_2.vertices_[2].coords_[axe] = 0;
+    for (int i = 0; i < 3; ++i) {
+        tmp_tr_1[i][axe] = 0;
+        tmp_tr_2[i][axe] = 0;
+    }
 
     //basis transformation to XY
     if(axe == 0) {
