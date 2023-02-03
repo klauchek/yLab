@@ -136,6 +136,10 @@ public:
         }
     }
 
+    octree_node_t (const octree_node_t &rhs) = delete;
+    octree_node_t (octree_node_t &&rhs) = delete;
+    octree_node_t &operator=(octree_node_t &&rhs) = delete;
+    octree_node_t &operator=(const octree_node_t &rhs) = delete;
     virtual ~octree_node_t() = default;
 };
 
