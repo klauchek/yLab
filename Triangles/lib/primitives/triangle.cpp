@@ -18,7 +18,7 @@ std::istream& operator>>(std::istream &in, triangle_t &triangle) {
 //-----------------------------------------------//
 
 //moving p point to 0 position
-void triangle_t::circular_permutation(const std::array<int, 3> res, int sign){
+void triangle_t::circular_permutation(const std::array<int, 3> &res, int sign){
     if(res[0] == sign)
         return;
     std::swap(vertices_[0], vertices_[2]);
@@ -26,11 +26,21 @@ void triangle_t::circular_permutation(const std::array<int, 3> res, int sign){
     std::swap(vertices_[0 + a], vertices_[1 + a]);
 }
 
-void triangle_t::set_p(const std::array<int, 3> res, int sum) {
-    if(sum == 1)
-        circular_permutation(res, -1);
-    if(sum == -1)
-        circular_permutation(res, 1);
+void triangle_t::set_p(const std::array<int, 3> &res, int sum) {
+    if(sum == 0)
+        circular_permutation(res, -1);    
+    if(sum == 1) {
+        if(std::count(res.begin(), res.end(), 0) == 2)
+            circular_permutation(res, 1);
+        else
+            circular_permutation(res, -1);
+    }
+    if(sum == -1) {
+        if(std::count(res.begin(), res.end(), 0) == 2)
+            circular_permutation(res, -1);
+        else
+            circular_permutation(res, 1);
+    }
     if(sum == 2 || sum == -2)
         circular_permutation(res, 0);
 }

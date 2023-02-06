@@ -71,14 +71,16 @@ bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
             return one_common_point_3D(res_1, tr_1, tr_2);
         return one_common_point_3D(res_2, tr_2, tr_1);
     }
+
     sort_triangles(tr_1, tr_2, res_1, sum_1);
+    res_2 = check_relative_pos(tr_1, tr_2);
     sort_triangles(tr_2, tr_1, res_2, sum_2);
 
     std::array<geometry::vector_t, 3> vertices_1{tr_1[0], tr_1[1], tr_1[2]};
     std::array<geometry::vector_t, 3> vertices_2{tr_2[0], tr_2[1], tr_2[2]};
-
-    return (cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[1], vertices_2[0]), 0.0) >= 0
-            || common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0 <= 0);
+    
+    return (cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]), 0.0) <= 0
+            && cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0) <= 0);
 }
 
 void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> res_1, int sum_1) {

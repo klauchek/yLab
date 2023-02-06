@@ -4,6 +4,7 @@
 #include "vector.hpp"
 #include "common/common.hpp"
 #include <vector>
+#include <algorithm>
 
 namespace geometry {
 
@@ -18,11 +19,11 @@ struct triangle_t final {
     size_t get_nvertex() const;
     vector_t &operator[](int num) { return vertices_[num]; }
     const vector_t &operator[](int num) const { return vertices_[num]; }
-    void circular_permutation(const std::array<int, 3> res, int sign);
+    void circular_permutation(const std::array<int, 3> &res, int sign);
     void circular_permutation();
     void coords_circular_permutation();
     void counter_clock();
-    void set_p(const std::array<int, 3> res, int sum);
+    void set_p(const std::array<int, 3> &res, int sum);
     void swap_qr();
     void line_counter_clock();
 };

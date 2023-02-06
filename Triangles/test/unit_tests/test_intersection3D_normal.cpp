@@ -59,6 +59,25 @@ TEST(test_3D, without_intersec) {
     EXPECT_FALSE(res_intersec);
 }
 
+TEST(test_3D, without_intersec_2) {
+    //1 tr
+    struct geometry::vector_t vec10{0, 0, 0};
+    struct geometry::vector_t vec11{0, 1, 0};
+    struct geometry::vector_t vec12{1, 0, 0};
+    //2 tr
+    struct geometry::vector_t vec20{0, 0, 0.6};
+    struct geometry::vector_t vec21{1, 1, -0.4};
+    struct geometry::vector_t vec22{1, 1, 0.6};
+
+    geometry::triangle_t triangle_1(vec10, vec11, vec12);
+    geometry::triangle_t triangle_2(vec20, vec21, vec22);
+
+    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_FALSE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_FALSE(res_intersec);
+}
+
 TEST(test_3D, simple) {
     //1 tr
     struct geometry::vector_t vec10{0, 0, 0};
@@ -68,6 +87,26 @@ TEST(test_3D, simple) {
     struct geometry::vector_t vec20{-2.22, 2.24, -3};
     struct geometry::vector_t vec21{2, -1, 3};
     struct geometry::vector_t vec22{-2.99, 3.42, -2};
+
+    geometry::triangle_t triangle_1(vec10, vec11, vec12);
+    geometry::triangle_t triangle_2(vec20, vec21, vec22);
+
+    bool res_intersec = intersection::intersection(triangle_1, triangle_2);
+    EXPECT_TRUE(res_intersec);
+    res_intersec = intersection::intersection(triangle_2, triangle_1);
+    EXPECT_TRUE(res_intersec);
+}
+
+
+TEST(test_3D, simple_2) {
+    //1 tr
+    struct geometry::vector_t vec10{0, 0, 0};
+    struct geometry::vector_t vec11{0, 1, 0};
+    struct geometry::vector_t vec12{1, 0, 0};
+    //2 tr
+    struct geometry::vector_t vec20{0, 0, 0.5};
+    struct geometry::vector_t vec21{1, 1, -0.5};
+    struct geometry::vector_t vec22{1, 1, 0.5};
 
     geometry::triangle_t triangle_1(vec10, vec11, vec12);
     geometry::triangle_t triangle_2(vec20, vec21, vec22);
