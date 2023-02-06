@@ -42,7 +42,7 @@ bool point_in_triangle(const geometry::vector_t &point, const geometry::triangle
     return (determine_side(point, a, b, c) && determine_side(point, b, a, c) && determine_side(point, c, a, b));
 }
 
-bool one_common_point_3D(const std::array<int, 3> res, const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2) {
+bool one_common_point_3D(const std::array<int, 3> &res, const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2) {
     auto elem = std::find(res.begin(), res.end(), 0);
     size_t idx = std::distance(res.begin(), elem);
     geometry::vector_t point = tr_1[idx];
@@ -78,12 +78,12 @@ bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2) {
 
     std::array<geometry::vector_t, 3> vertices_1{tr_1[0], tr_1[1], tr_1[2]};
     std::array<geometry::vector_t, 3> vertices_2{tr_2[0], tr_2[1], tr_2[2]};
-    
+
     return (cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[1], vertices_2[0], vertices_2[1]), 0.0) <= 0
             && cmp::dbl_cmp(common::calc_det(vertices_1[0], vertices_1[2], vertices_2[2], vertices_2[0]), 0.0) <= 0);
 }
 
-void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> res_1, int sum_1) {
+void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> &res_1, int sum_1) {
     tr_1.set_p(res_1, sum_1);
     int sign = (cmp::dbl_cmp(common::calc_det(tr_2[0], tr_2[1], tr_2[2], tr_1[0]), 0.0) > 0) ? 1 : -1;
     if(sign == -1)
@@ -193,14 +193,10 @@ namespace {
 
 // --- check if p is in ++- part +--
 bool check_R1(const std::array<int, 3> res) {
-    if(res[0] > 0 && res[1] > 0 && res[2] == 0)
-        return true;
-    return false;
+    return (res[0] > 0 && res[1] > 0 && res[2] == 0);
 }
 bool check_R2(const std::array<int, 3> res) {
-    if(res[0] > 0 && res[1] == 0 && res[2] == 0)
-        return true;
-    return false;
+    return (res[0] > 0 && res[1] == 0 && res[2] == 0);
 }
 
 bool determine_region(geometry::vector_t &p_1, std::array<int, 3> res, geometry::triangle_t &tr_2) {
@@ -390,9 +386,7 @@ bool intersection_degenerate(geometry::triangle_t tr_1, geometry::triangle_t tr_
 }
 
 bool det_signs_comp(double det_1, double det_2) {
-    if((cmp::dbl_cmp(det_1, 0.0) > 0 && cmp::dbl_cmp(det_2, 0.0) > 0) || (cmp::dbl_cmp(det_1, 0.0) < 0 && cmp::dbl_cmp(det_2, 0.0) < 0))
-        return true;
-    return false;
+    return ((cmp::dbl_cmp(det_1, 0.0) > 0 && cmp::dbl_cmp(det_2, 0.0) > 0) || (cmp::dbl_cmp(det_1, 0.0) < 0 && cmp::dbl_cmp(det_2, 0.0) < 0));
 }
 
 bool one_line_degenerates(const geometry::vector_t &p1, const geometry::vector_t &r1, const geometry::vector_t &p2, const geometry::vector_t &r2) {

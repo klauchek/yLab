@@ -14,8 +14,8 @@ namespace intersection {
 //--------------------- 3D INTERSECTION ---------------------//
 std::array<int, 3> check_relative_pos(const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2);
 bool point_in_triangle(const geometry::vector_t &point, const geometry::triangle_t &tr);
-bool one_common_point_3D(const std::array<int, 3> res, const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2);
-void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> res_1, int sum_1);
+bool one_common_point_3D(const std::array<int, 3> &res, const geometry::triangle_t &tr_1, const geometry::triangle_t &tr_2);
+void sort_triangles(geometry::triangle_t &tr_1, geometry::triangle_t &tr_2, const std::array<int, 3> &res_1, int sum_1);
 bool intersection(geometry::triangle_t tr_1, geometry::triangle_t tr_2);
 
 //--------------------- 2D INTERSECTION ---------------------//

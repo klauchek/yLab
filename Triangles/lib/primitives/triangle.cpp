@@ -41,7 +41,7 @@ void triangle_t::set_p(const std::array<int, 3> &res, int sum) {
         else
             circular_permutation(res, 1);
     }
-    if(sum == 2 || sum == -2)
+    if(std::abs(sum) == 2)
         circular_permutation(res, 0);
 }
 void triangle_t::swap_qr() {
