@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <utility>
-// ProxyRow here
+#include <cmath>
 
 namespace containers {
 
@@ -52,7 +52,7 @@ protected:
 
     LinearBuf(size_t sz = 0)
         : arr_((sz == 0) ? nullptr
-        : static_cast<T *>(::operator new(sizeof(T) * (sz * sz)))), size_(sz * sz) {
+        : static_cast<T *>(::operator new(sizeof(T) * sz))), size_(sz) {
             std::cout << "LinearBuf ctor" << std::endl;
         }
 
@@ -69,7 +69,8 @@ struct Linear : private LinearBuf<T> {
     using LinearBuf<T>::size_;
     using LinearBuf<T>::arr_;
 
-    explicit Linear(size_t sz = 0) : LinearBuf<T>(sz * sz) {}
+    //------------------------ big five ----------------------------//
+    explicit Linear(size_t size_1 = 0, size_t size_2 = 0) : LinearBuf<T>(size_1 * size_2) {}
 
     Linear(Linear &&rhs) = default;
     Linear &operator=(Linear &&rhs) = default;
@@ -92,9 +93,31 @@ struct Linear : private LinearBuf<T> {
         return *this;
     }
 
-    T &operator[](size_t idx) {
-        return arr_[idx];
+    //--------------------------------------------------------------//
+
+    //T& operator[](size_t idx) { return arr_[idx]; }
+
+
+    T* get_n_row(size_t idx) {
+        return arr_ + idx;
     }
+
+    //T *data () { return arr_; }
+
+    void fill(T val) {
+        std::fill_n(arr_, size_, val);
+    }
+
+    template <typename It>
+    void fill(It start, It fin) {
+        size_t i = 0;
+        for (auto it = start; it != fin && i != size_; ++it, ++i)
+            arr_[i] = *it;
+
+        for (; i != size_; ++i)
+            arr_[i] = T{};
+    }
+
 };
 //------------------------------------------------------------------//
 
@@ -127,9 +150,9 @@ protected:
     }
 
 //поймать исключение или сделать nothrow и обработать
-    JaggedBuf(size_t sz = 0)
-            : arr_((sz == 0) ? nullptr
-            : static_cast<T **>(::operator new(sizeof(T*) * sz))), size_1_(sz), size_2_(sz) {
+    JaggedBuf(size_t size_1 = 0, size_t size_2 = 0)
+            : arr_((size_1 == 0 || size_2 == 0) ? nullptr
+            : static_cast<T **>(::operator new(sizeof(T*) * size_1))), size_1_(size_1), size_2_(size_2) {
             std::cout << "JaggedBuf ctor" << std::endl;
             for (size_t i = 0; i < size_1_; ++i)
                 arr_[i] = static_cast<T *>(::operator new(sizeof(T) * size_2_));
@@ -152,9 +175,10 @@ struct Jagged : private JaggedBuf<T> {
     using JaggedBuf<T>::size_2_;
     using JaggedBuf<T>::arr_;
 
-    explicit Jagged(size_t sz = 0) : JaggedBuf<T>(sz) {}
+    //------------------------ big five ----------------------------//
+    explicit Jagged(size_t size_1 = 0, size_t size_2 = 0) : JaggedBuf<T>(size_1, size_2) {}
 
-    Jagged(const Jagged &rhs) : JaggedBuf<T>(rhs.size_) {
+    Jagged(const Jagged &rhs) : JaggedBuf<T>(rhs.size_1_, rhs.size_2_) {
         std::cout << "Jagged copy ctor" << std::endl;
         size_1_ = 0;
         size_2_ = 0;
@@ -173,9 +197,39 @@ struct Jagged : private JaggedBuf<T> {
         std::swap(*this, tmp);
         return *this;
     }
+    //--------------------------------------------------------------//
+
+    //T& operator[](size_t row) { return arr_[row / size_2_][0]; }
+
+    T* get_n_row(size_t row) {
+        return arr_[row / size_2_];
+    }
+
+    //T *data () { return arr_; }
+
+    void fill(T val) {
+        for (size_t i = 0; i < size_1_; ++i)
+            std::fill_n(arr_[i], size_2_, val);
+    }
+
+    template <typename It>
+    void fill(It start, It fin) {
+        size_t i = 0;
+        size_t j = 0;
+        for(; i < size_1_; ++i) {
+            for (auto it = start; it != fin && j < size_2_; ++it, ++j)
+                arr_[i][j] = *it;
+        }
+        for (; i < size_1_; ++i)
+            for(; j < size_2_; ++j)
+                arr_[i][j] = T{};
+    }
+
 };
 //--------------------------------------------------------------------//
 
 } //namespace containers
+
+
 
 #endif //CONTAINERS__HPP__
