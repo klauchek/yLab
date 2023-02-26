@@ -50,21 +50,46 @@ public:
 
 
     //--------------- BIG FIVE --------------------
-    // Matrix(const Matrix &rhs) = default;
-    // Matrix(Matrix &&rhs) noexcept = default;
-    // Matrix& operator=(const Matrix &rhs) = default;
-    // Matrix& operator=(Matrix &&rhs) noexcept = default;
+    Matrix(const Matrix &rhs) = default;
+    Matrix(Matrix &&rhs) noexcept = default;
+    Matrix& operator=(const Matrix &rhs) = default;
+    Matrix& operator=(Matrix &&rhs) noexcept = default;
 
     //---------------------------------------------
 
+    // bool equal(const Matrix& other) const {
 
+    // }
+    // void dump(std::ostream& os) const{
+
+    // }
+
+    //     void dump (std::ostream &out) const
+    // {
+    //     for (size_t i = 0; i < nRows_; ++i) {
+    //         size_t row = nCols_ * i;
+    //         for (size_t j = 0; j < nCols_; ++j)
+    //             out << arr_[row + j] << " ";
+
+    //         if (i + 1 != nRows_)
+    //             out << std::endl;
+    //     }
+    // }
+
+    // //-----------------------------------------------------------------------------------------------------
+
+    // void input (std::istream &in)
+    // {
+    //     for (size_t i = 0, size = nRows_ * nCols_; i < size; ++i)
+    //         in >> arr_[i];
+    // }
 
     //to do -- dump
     size_t n_cols() const { return cols_; }
     size_t n_rows() const { return rows_; }
     size_t size() const { return cols_ * rows_; }
 
-    virtual ~Matrix() {};
+    virtual ~Matrix() = default;
 };
 
 //operator== -- equal

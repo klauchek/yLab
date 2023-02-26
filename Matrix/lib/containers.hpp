@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <utility>
 #include <cmath>
+#include <stdexcept>
+#include <iterator>
 
 namespace containers {
 
@@ -110,12 +112,12 @@ struct Linear : private LinearBuf<T> {
 
     template <typename It>
     void fill(It start, It fin) {
-        size_t i = 0;
-        for (auto it = start; it != fin && i != size_; ++it, ++i)
-            arr_[i] = *it;
+        auto dist = std::distance(start, fin);
+        if(dist > size_)
+            throw std::out_of_range{"sequence is bigger than buffer size"};
 
-        for (; i != size_; ++i)
-            arr_[i] = T{};
+        std::copy_n(start, dist, arr_);
+        std::fill_n(arr_ + dist, size_ - dist, T{});
     }
 
 };
@@ -212,17 +214,29 @@ struct Jagged : private JaggedBuf<T> {
             std::fill_n(arr_[i], size_2_, val);
     }
 
+
+//todo algo
     template <typename It>
     void fill(It start, It fin) {
+        if(std::distance(start, fin) > size_1_ * size_2_)
+            throw std::out_of_range{"sequence is bigger than buffer size"};
+
         size_t i = 0;
-        size_t j = 0;
-        for(; i < size_1_; ++i) {
-            for (auto it = start; it != fin && j < size_2_; ++it, ++j)
-                arr_[i][j] = *it;
+        for(auto it = start; it != fin; ++i) {
+            size_t j = 0;
+            size_t rem = 0;
+            auto dist = std::distance(it, fin);
+            rem = std::min(size_2_, static_cast<size_t>(dist));
+            std::copy_n(it, rem, arr_[i]);
+            j = rem - 1;
+            std::advance(it, j + 1);
+
+            if(rem == dist)
+                std::fill_n(arr_[i] + rem, size_2_ - rem, T{});
         }
+        
         for (; i < size_1_; ++i)
-            for(; j < size_2_; ++j)
-                arr_[i][j] = T{};
+            std::fill_n(arr_[i], size_2_, T{});
     }
 
 };
