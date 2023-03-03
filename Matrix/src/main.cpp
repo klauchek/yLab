@@ -2,6 +2,24 @@
 #include <vector>
 
 int main() {
+
+    size_t n;
+	std::cin >> n;
+
+    matrix::SquareMatrix<containers::Linear<double>, double> matrix(n);
+    // std::cin >> matrix;
+
+
+    // for(int i = 0; i < n; ++i){
+    //     for(int j = 0; j < n; ++j)
+    //         std::cout << matrix[i][j];
+    //     std::cout << std::endl;
+    // }
+
+    // std::cout << std::endl;
+    // std::cout << "DET: " << matrix.calc_det() << std::endl;
+    // std::cout << std::endl;
+
     //matrix::SquareMatrix<containers::Linear<int>, int> m_lin(3, 1);
     //matrix::SquareMatrix<containers::Linear<int>, int> m_lin_2(5, 2);
     // matrix::SquareMatrix<containers::Jagged<int>, int> m_jag(5, 3);
@@ -12,20 +30,39 @@ int main() {
     //m_lin = std::move(m_jag)
 
 
-    std::vector<int> vec{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    matrix::SquareMatrix<containers::Linear<int>, int> m_lin(3, vec.begin(), vec.end());
+    //std::vector<int> vec{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    //matrix::SquareMatrix<containers::Linear<int>, int> m_lin(3, vec.begin(), vec.end());
     //matrix::SquareMatrix<containers::Linear<int>, int> m_lin_2(5, 2);
-    //matrix::SquareMatrix<containers::Jagged<int>, int> m_jag(2, vec.begin(), vec.end());
+    //matrix::SquareMatrix<containers::Jagged<int>, int> m_jag(3, vec.begin(), vec.end());
     
-    for(int i = 0; i < 3; ++i){
-        for(int j = 0; j < 3; ++j)
-            std::cout << m_lin[i][j];
-        std::cout << std::endl;
-    }
+    //m_lin.swap_rows(0, 1);
+    //m_lin.swap_columns(1, 2);
+
+    // for(int i = 0; i < 3; ++i){
+    //     for(int j = 0; j < 3; ++j)
+    //         std::cout << m_lin[i][j];
+    //     std::cout << std::endl;
+    // }
+
     std::cout << std::endl;
 
-    // for(int i = 0; i < 2; ++i){
-    //     for(int j = 0; j < 2; ++j)
+
+    matrix = matrix::SquareMatrix<containers::Linear<double>, double>::eye(5);
+
+
+    for(int i = 0; i < n; ++i){
+        for(int j = 0; j < n; ++j)
+            std::cout << matrix[i][j];
+        std::cout << std::endl;
+    }
+
+    // for(int i = 0; i < 5; ++i) {
+    //     for(int j = 0; j < 5; ++j)
+    //         std::cout << m[i][j];
+    //     std::cout << std::endl;
+    // }
+    // for(int i = 0; i < 3; ++i){
+    //     for(int j = 0; j < 3; ++j)
     //         std::cout << m_jag[i][j];
     //     std::cout << std::endl;
     // }

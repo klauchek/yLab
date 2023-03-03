@@ -72,7 +72,7 @@ struct Linear : private LinearBuf<T> {
     using LinearBuf<T>::arr_;
 
     //------------------------ big five ----------------------------//
-    explicit Linear(size_t size_1 = 0, size_t size_2 = 0) : LinearBuf<T>(size_1 * size_2) {}
+    Linear(size_t size_1 = 0, size_t size_2 = 0) : LinearBuf<T>(size_1 * size_2) {}
 
     Linear(Linear &&rhs) = default;
     Linear &operator=(Linear &&rhs) = default;
@@ -97,7 +97,8 @@ struct Linear : private LinearBuf<T> {
 
     //--------------------------------------------------------------//
 
-    //T& operator[](size_t idx) { return arr_[idx]; }
+    T& operator[](size_t idx) { return arr_[idx]; }
+    const T& operator[](size_t idx) const { return arr_[idx]; }
 
 
     T* get_n_row(size_t idx) {
@@ -119,6 +120,14 @@ struct Linear : private LinearBuf<T> {
         std::copy_n(start, dist, arr_);
         std::fill_n(arr_ + dist, size_ - dist, T{});
     }
+
+    // swap_rows(size_t row_1, size_t row_2) {
+    //     std::swap_ranges(arr + row_1 * size_, arr + row_1 + size_1, )
+    // }
+
+    // swap_columns(size_t col_1, size_t col_2) {
+
+    // }
 
 };
 //------------------------------------------------------------------//
@@ -178,7 +187,7 @@ struct Jagged : private JaggedBuf<T> {
     using JaggedBuf<T>::arr_;
 
     //------------------------ big five ----------------------------//
-    explicit Jagged(size_t size_1 = 0, size_t size_2 = 0) : JaggedBuf<T>(size_1, size_2) {}
+    Jagged(size_t size_1 = 0, size_t size_2 = 0) : JaggedBuf<T>(size_1, size_2) {}
 
     Jagged(const Jagged &rhs) : JaggedBuf<T>(rhs.size_1_, rhs.size_2_) {
         std::cout << "Jagged copy ctor" << std::endl;
@@ -201,10 +210,10 @@ struct Jagged : private JaggedBuf<T> {
     }
     //--------------------------------------------------------------//
 
-    //T& operator[](size_t row) { return arr_[row / size_2_][0]; }
+    T& operator[](size_t idx) { return arr_[idx / size_2_][idx % size_2_]; }
 
-    T* get_n_row(size_t row) {
-        return arr_[row / size_2_];
+    T* get_n_row(size_t idx) {
+        return arr_[idx / size_2_];
     }
 
     //T *data () { return arr_; }
@@ -238,6 +247,14 @@ struct Jagged : private JaggedBuf<T> {
         for (; i < size_1_; ++i)
             std::fill_n(arr_[i], size_2_, T{});
     }
+
+    // swap_rows(size_t row_1, size_t row_2) {
+
+    // }
+
+    // swap_columns(size_t col_1, size_t col_2) {
+        
+    // }
 
 };
 //--------------------------------------------------------------------//

@@ -4,15 +4,30 @@
 #include <iostream>
 #include "containers.hpp"
 
+namespace cmp {
+
+int dbl_cmp(const double x, const double y) {
+    const double epsilon = 10E-15;
+
+    if (std::abs(x - y) < epsilon)
+        return 0;
+    if (x - y > 0)
+        return 1;
+    return -1;
+}
+
+}//namespace cmp
+
+
 namespace matrix {
 
 template <typename ArrT, typename T>
 class Matrix {
 
-private:
+protected:
+    ArrT matrix_;
     size_t rows_;
     size_t cols_;
-    ArrT matrix_;
 
     T *data () { return matrix_.data(); }
 
@@ -32,22 +47,21 @@ public:
 
     //получает строку -- первые []
     ProxyRow operator[] (size_t n) {
-        return ProxyRow{ matrix_.get_n_row(n * rows_) };
+        return ProxyRow{ matrix_.get_n_row(n * cols_) };
     }
 
     //filled with T
-    Matrix(size_t rows, size_t cols, T val = T{}) : rows_(rows), cols_(cols), matrix_(rows, cols) {
+    Matrix(size_t rows, size_t cols, T val = T{}) : matrix_(rows, cols), rows_(rows), cols_(cols) {
         std::cout << "matrix value ctor " << std::endl;
         matrix_.fill(val);
     }
     
     //из заданной последовательности
     template <typename It>
-    Matrix(size_t rows, size_t cols, It start, It fin) : rows_(rows), cols_(cols), matrix_(rows, cols) {
+    Matrix(size_t rows, size_t cols, It start, It fin) : matrix_(rows, cols), rows_(rows), cols_(cols) {
         std::cout << "matrix container ctor " << std::endl;
         matrix_.fill(start, fin);
     }
-
 
     //--------------- BIG FIVE --------------------
     Matrix(const Matrix &rhs) = default;
@@ -55,36 +69,23 @@ public:
     Matrix& operator=(const Matrix &rhs) = default;
     Matrix& operator=(Matrix &&rhs) noexcept = default;
 
-    //---------------------------------------------
+    //-----------------------------------------------------------------------------------------------------
 
-    // bool equal(const Matrix& other) const {
+    void input (std::istream &in) {
+        for (size_t i = 0, size = rows_ * cols_; i < size; ++i)
+            in >> matrix_[i];
+    }
 
-    // }
-    // void dump(std::ostream& os) const{
+    void dump (std::ostream &out) const {
+        for (size_t i = 0; i < rows_; ++i) {
+            size_t row = cols_ * i;
+            for (size_t j = 0; j < cols_; ++j)
+                out << matrix_[row + j] << " ";
 
-    // }
-
-    //     void dump (std::ostream &out) const
-    // {
-    //     for (size_t i = 0; i < nRows_; ++i) {
-    //         size_t row = nCols_ * i;
-    //         for (size_t j = 0; j < nCols_; ++j)
-    //             out << arr_[row + j] << " ";
-
-    //         if (i + 1 != nRows_)
-    //             out << std::endl;
-    //     }
-    // }
-
-    // //-----------------------------------------------------------------------------------------------------
-
-    // void input (std::istream &in)
-    // {
-    //     for (size_t i = 0, size = nRows_ * nCols_; i < size; ++i)
-    //         in >> arr_[i];
-    // }
-
-    //to do -- dump
+            if (i + 1 != rows_)
+                out << std::endl;
+        }
+    }
     size_t n_cols() const { return cols_; }
     size_t n_rows() const { return rows_; }
     size_t size() const { return cols_ * rows_; }
@@ -92,13 +93,35 @@ public:
     virtual ~Matrix() = default;
 };
 
+template <typename ArrT, typename T>
+std::istream &operator>> (std::istream &in, Matrix<ArrT, T> &matrix){
+    matrix.input(in);
+    return in;
+}
+
+template <typename ArrT, typename T>
+std::ostream &operator<< (std::ostream &out, const Matrix<ArrT, T> &matrix) {
+    matrix.dump(out);
+    return out;
+}
+
+
+
 //operator== -- equal
 //operator << -- dump
 
 template <typename ArrT, typename T>
 class SquareMatrix final : public Matrix<ArrT, T> {
 
+private:
+
+    using Matrix<ArrT, T>::rows_;
+    using Matrix<ArrT, T>::cols_;
+    using Matrix<ArrT, T>::matrix_;
+
 public:
+//-------------------------- CONSTRUCTORS --------------------------//
+
     //filled with T
     SquareMatrix(size_t sz, T val = T{}) : Matrix<ArrT, T>(sz, sz, val) {}
     
@@ -108,128 +131,110 @@ public:
 
     static SquareMatrix eye(size_t sz) {
         std::cout << "matrix eye ctor " << std::endl;
+        SquareMatrix<ArrT, T> matr {sz};
+        for(size_t i = 0; i < sz; ++i)
+            matr[i][i] = T{1};
+
+        return matr;
+    }
+
+    struct Elem {
+        T value;
+        size_t row;
+        size_t col;
+    };
+
+
+
+//--------------------- DETERMINANT CALCULATION --------------------//
+    Elem max_elem(size_t row, size_t col) {
+
+        Elem max {};
+        for(size_t i = row; i < rows_; ++i) {
+            for(size_t j = col; j < cols_; ++j) {
+                if(std::abs(matrix_[i * cols_ + j]) > std::abs(max.value)) {
+                    max.value = matrix_[i * cols_ + j];
+                    max.row = i;
+                    max.col = j;
+                }
+            }
+        }
+
+        return max;
+    }
+
+    
+    void swap_rows(size_t row_1, size_t row_2) {
+        auto first = matrix_.get_n_row(row_1 * cols_);
+        auto second = matrix_.get_n_row(row_2 * cols_);
+        std::swap_ranges(first, first + cols_, second);
+    }
+
+    void swap_columns(size_t col_1, size_t col_2) {
+        for(int i = 0; i < rows_; ++i) {
+            size_t row_beg = i * cols_;
+            std::swap(matrix_[row_beg + col_1], matrix_[row_beg + col_2]);
+        }
     }
 
 
-// //-------------- DETERMINANT CALCULATION -------------//
-//     struct elem *max_elem(struct matrix *m, int col, int row) {
+    void eliminate(size_t row) {
 
-//         struct elem *max = NULL;
-//         assert(m);
+        double coef = 0.0;
+        for(size_t i = row + 1; i < rows_; ++i) {
+            coef = (double)matrix_[i * cols_ + row] / matrix_[row * cols_ + row];
+            std::cout << "coef " << coef << std::endl;
+            for(int j = row; j < cols_; ++j)
+                matrix_[i * cols_ + j] -= coef * matrix_[row * cols_ + j];
+        }
+        std::cout << *this << std::endl;
+    }
 
-//         max = (struct elem *)calloc(1, sizeof(struct elem));
+    T mult_diagonal() {
+        double diag = 1.0;
+        for(size_t i = 0; i < rows_; ++i)
+            diag *= (double)matrix_[i * cols_ + i];
+        return diag;
+    }
 
-//         for(int i = row; i < m->size; ++i) {
-//             for(int j = col; j < m->size; ++j) {
-//                 if(fabs(m->arr[i][j]) > fabs(max->value)) {
-//                     max->value = m->arr[i][j];
-//                     max->row = i;
-//                     max->col = j;
-//                 }
-//             }
-//         }
+    T calc_det() {
+        int sign = 1;
+        size_t i {};
+        size_t j {};
 
-//         return max;
-//     }
+        while(i < rows_ - 1 && j < cols_ - 1) {
 
-//     void swap_rows(size_t row_1, size_t row_2) {
-//         std::swap(matrix_[row_1], matrix_[row_2]);
-//         // T *temp_row;
-//         // temp_row = m->arr[row_1];
-//         // m->arr[row_1] = m->arr[row_2];
-//         // m->arr[row_2] = temp_row;
-//     }
+            Elem pivot = max_elem(i, i);
+            //std::cout << " pivot.value " << pivot.value << std::endl;
 
-//     void swap_columns(size_t col_1, size_t col_2) {
-        
-//         double temp = 0.0;
-//         for(int i = 0; i < m->size; ++i) {
-//             temp = m->arr[i][col_1];
-//             m->arr[i][col_1] = m->arr[i][col_2];
-//             m->arr[i][col_2] = temp;
-//         }
-//     }
+            if(cmp::dbl_cmp(pivot.value, 0.0) == 0 && i == 0) {
+                std::cout << "im here " << std::endl;
+                return 0;
 
+            }
 
-//     void eliminate(size_t row) {
+            if(i != pivot.row) {
+                swap_rows(i, pivot.row);
+                sign *= -1;
+            }
+            if(j != pivot.col) {
+                swap_columns(j, pivot.col);
+                sign *= -1;
+            }
 
-//         double coef = 0.0;
-//         for(int i = row + 1; i < m->size; ++i) {
-//             coef = m->arr[i][row] / m->arr[row][row];
-//             for(int j = row; j < m->size; ++j)
-//                 m->arr[i][j] -= coef * m->arr[row][j];
-//         }
-//     }
-//     //последняя строчка
+            if(cmp::dbl_cmp(matrix_[i * cols_ + i], 0.0) != 0)
+                eliminate(i);
+            ++i;
+            ++j;
+        }
 
-//     T mult_diagonal() {
-//         T diag = 1.0;
-//         for(size_t i = 0; i < rows_; ++i)
-//             diag *= matrix_[i][i];
-        
-//         return diag;
-//     }
-
-//     T calc_det() {
-//         int res = 1;
-//         int det = 0;
-//         int i = 0;
-//         int j = 0;
-//         struct elem *max = NULL;
-//         struct elem *pivot = NULL;
-//         assert(m);
-
-//         pivot = (struct elem *)calloc(1, sizeof(struct elem));
-
-//         while(i < m->size - 1 && j < m->size - 1) {
-
-//             max = max_elem(m, i, i);
-
-//             if(dbl_cmp(max->value, 0.0) && i == 0)
-//                 return 0;
-
-//             pivot->row = max->row;
-//             pivot->col = max->col;
-
-//             free(max);
-
-//             if(i != pivot->row) {
-//                 swap_rows(m, i, pivot->row);
-//                 res *= -1;
-//             }
-//             if(j != pivot->col) {
-//                 swap_columns(m, j, pivot->col);
-//                 res *= -1;
-//             }
-
-//             if(!dbl_cmp(m->arr[i][i], 0.0))
-//                 eliminate(m, i);
-//             ++i;
-//             ++j;
-//         }
-//         free(pivot);
-//         det = mult_diagonal(m) * res;
-//         return det;
-//     }
+        T det = mult_diagonal() * sign;
+        return det;
+    }
 
 
 };
 
 } //namespace matrix
-
-
-namespace cmp {
-
-int dbl_cmp(const double x, const double y) {
-    const double epsilon = 10E-15;
-
-    if (std::abs(x - y) < epsilon)
-        return 0;
-    if (x - y > 0)
-        return 1;
-    return -1;
-}
-
-}//namespace cmp
 
 #endif //MATRIX__HPP__
