@@ -60,17 +60,18 @@ protected:
 
     ~LinearBuf() {
         std::cout << "LinearBuf dtor" << std::endl;
-        std::cout << size_ << std::endl;
         destroy(arr_, arr_ + size_);
         ::operator delete(arr_);
     }
 };
 
+
+//TODO: think about class struct private public
 template <typename T>
-struct Linear : private LinearBuf<T> { 
+struct Linear : private LinearBuf<T> {
+
     using LinearBuf<T>::size_;
     using LinearBuf<T>::arr_;
-
     //------------------------ big five ----------------------------//
     Linear(size_t size_1 = 0, size_t size_2 = 0) : LinearBuf<T>(size_1 * size_2) {}
 
@@ -79,8 +80,6 @@ struct Linear : private LinearBuf<T> {
 
     Linear(const Linear &rhs) : LinearBuf<T>(rhs.size_) {
         std::cout << "Linear copy ctor" << std::endl;
-        std::cout << size_ << std::endl;
-        std::cout << rhs.size_ << std::endl;
         size_ = 0;
         while (size_ < rhs.size_) {
             construct(arr_ + size_, rhs.arr_[size_]);
@@ -101,11 +100,8 @@ struct Linear : private LinearBuf<T> {
     const T& operator[](size_t idx) const { return arr_[idx]; }
 
 
-    T* get_n_row(size_t idx) {
-        return arr_ + idx;
-    }
-
-    //T *data () { return arr_; }
+    T* get_n_row(size_t idx) { return arr_ + idx; }
+    T* const get_n_row(size_t idx) const { return arr_ + idx; }
 
     void fill(T val) {
         std::fill_n(arr_, size_, val);
@@ -121,14 +117,13 @@ struct Linear : private LinearBuf<T> {
         std::fill_n(arr_ + dist, size_ - dist, T{});
     }
 
-    // swap_rows(size_t row_1, size_t row_2) {
-    //     std::swap_ranges(arr + row_1 * size_, arr + row_1 + size_1, )
-    // }
+    bool equal(const Linear &rhs) const {
+        if(size_ != rhs.size_)
+            return false;
+        return std::equal(arr_, arr_ + size_, rhs.arr_);
+    }
 
-    // swap_columns(size_t col_1, size_t col_2) {
-
-    // }
-
+    size_t size() const { return size_; }
 };
 //------------------------------------------------------------------//
 
@@ -160,7 +155,6 @@ protected:
         return *this;
     }
 
-//поймать исключение или сделать nothrow и обработать
     JaggedBuf(size_t size_1 = 0, size_t size_2 = 0)
             : arr_((size_1 == 0 || size_2 == 0) ? nullptr
             : static_cast<T **>(::operator new(sizeof(T*) * size_1))), size_1_(size_1), size_2_(size_2) {
@@ -211,20 +205,16 @@ struct Jagged : private JaggedBuf<T> {
     //--------------------------------------------------------------//
 
     T& operator[](size_t idx) { return arr_[idx / size_2_][idx % size_2_]; }
+    const T& operator[](size_t idx) const { return arr_[idx / size_2_][idx % size_2_]; }
 
-    T* get_n_row(size_t idx) {
-        return arr_[idx / size_2_];
-    }
-
-    //T *data () { return arr_; }
+    T* get_n_row(size_t idx) { return arr_[idx / size_2_]; }
+    T* const get_n_row(size_t idx) const { return arr_[idx / size_2_]; }
 
     void fill(T val) {
         for (size_t i = 0; i < size_1_; ++i)
             std::fill_n(arr_[i], size_2_, val);
     }
 
-
-//todo algo
     template <typename It>
     void fill(It start, It fin) {
         if(std::distance(start, fin) > size_1_ * size_2_)
@@ -248,14 +238,15 @@ struct Jagged : private JaggedBuf<T> {
             std::fill_n(arr_[i], size_2_, T{});
     }
 
-    // swap_rows(size_t row_1, size_t row_2) {
-
-    // }
-
-    // swap_columns(size_t col_1, size_t col_2) {
-        
-    // }
-
+    bool equal(const Jagged &rhs) const{
+        if(size_1_ != rhs.size_1_ || size_2_ != rhs.size_2_)
+            return false;
+        for (size_t i = 0; i < size_1_; ++i) {
+            if(!std::equal(arr_[i], arr_[i] + size_2_, rhs.arr_[i]))
+                return false;
+        }
+        return true;
+    }
 };
 //--------------------------------------------------------------------//
 

@@ -29,8 +29,6 @@ protected:
     size_t rows_;
     size_t cols_;
 
-    T *data () { return matrix_.data(); }
-
     struct ProxyRow final {
         T* row_;
         T& operator[](size_t col) { return row_[col]; }
@@ -38,17 +36,28 @@ protected:
         const T& operator[](size_t col) const { return row_[col]; }
     };
 
-//coercion ctor && copy ctor
-    // template <typename U, typename ArrT>
-    // Matrix (const Matrix<U, ArrT> &rhs) {
 
-    // }
+    //make exeption safe 
+    template <typename ArrU, typename U>    
+    void copy(const Matrix<ArrU, U> &rhs) {
+        for(size_t i = 0; i < rhs.n_rows(); ++i)
+            for(size_t j = 0; j < rhs.n_cols(); ++j)
+                matrix_[i * cols_ + j] = rhs[i][j];
+
+        //copy in tmp
+        //move from tmp
+    }
+
 public:
 
     //получает строку -- первые []
     ProxyRow operator[] (size_t n) {
         return ProxyRow{ matrix_.get_n_row(n * cols_) };
     }
+    const ProxyRow operator[] (size_t n) const {
+        return ProxyRow{ matrix_.get_n_row(n * cols_) };
+    }
+    
 
     //filled with T
     Matrix(size_t rows, size_t cols, T val = T{}) : matrix_(rows, cols), rows_(rows), cols_(cols) {
@@ -63,13 +72,21 @@ public:
         matrix_.fill(start, fin);
     }
 
+    //coercion ctor
+    //
+    template <typename ArrU, typename U>
+    Matrix (const Matrix<ArrU, U> &rhs) : Matrix<ArrT, T>(rhs.n_rows(), rhs.n_cols()) {
+        std::cout << " Matr coercion " << std::endl;
+        copy(rhs);
+    }
+
     //--------------- BIG FIVE --------------------
     Matrix(const Matrix &rhs) = default;
     Matrix(Matrix &&rhs) noexcept = default;
     Matrix& operator=(const Matrix &rhs) = default;
     Matrix& operator=(Matrix &&rhs) noexcept = default;
 
-    //-----------------------------------------------------------------------------------------------------
+    //---------------------------------------------
 
     void input (std::istream &in) {
         for (size_t i = 0, size = rows_ * cols_; i < size; ++i)
@@ -86,6 +103,14 @@ public:
                 out << std::endl;
         }
     }
+
+    bool equal (const Matrix<ArrT, T> &other) const {
+        if (rows_ != other.rows_ || cols_ != other.cols_)
+            return false;
+
+        return matrix_.equal(other.matrix_);
+    }
+
     size_t n_cols() const { return cols_; }
     size_t n_rows() const { return rows_; }
     size_t size() const { return cols_ * rows_; }
@@ -105,10 +130,10 @@ std::ostream &operator<< (std::ostream &out, const Matrix<ArrT, T> &matrix) {
     return out;
 }
 
-
-
-//operator== -- equal
-//operator << -- dump
+template <typename ArrT, typename T>
+bool operator == (const Matrix<ArrT, T> &lhs, const Matrix<ArrT, T> &rhs) {
+    return lhs.equal(rhs);
+}
 
 template <typename ArrT, typename T>
 class SquareMatrix final : public Matrix<ArrT, T> {
@@ -119,6 +144,8 @@ private:
     using Matrix<ArrT, T>::cols_;
     using Matrix<ArrT, T>::matrix_;
 
+    //using Matrix<ArrT, T>::copy;
+
 public:
 //-------------------------- CONSTRUCTORS --------------------------//
 
@@ -128,6 +155,9 @@ public:
     //из заданной последовательности
     template <typename It>
     SquareMatrix(size_t sz, It start, It fin) : Matrix<ArrT, T>(sz, sz, start, fin) {}
+
+    template <typename ArrU, typename U>
+    SquareMatrix (const SquareMatrix<ArrU, U> &rhs) : Matrix<ArrT, T>(rhs) {}
 
     static SquareMatrix eye(size_t sz) {
         std::cout << "matrix eye ctor " << std::endl;
