@@ -32,7 +32,7 @@ template <typename FwdIter> void destroy(FwdIter first, FwdIter last) {
 template <typename T>
 struct LinearBuf {
 protected:
-    T *arr_;
+    T *arr_{};
     size_t size_ = 0;
 
 protected:
@@ -75,8 +75,8 @@ struct Linear : private LinearBuf<T> {
     //------------------------ big five ----------------------------//
     Linear(size_t size_1 = 0, size_t size_2 = 0) : LinearBuf<T>(size_1 * size_2) {}
 
-    Linear(Linear &&rhs) = default;
-    Linear &operator=(Linear &&rhs) = default;
+    Linear(Linear &&rhs) noexcept = default;
+    Linear &operator=(Linear &&rhs) noexcept = default;
 
     Linear(const Linear &rhs) : LinearBuf<T>(rhs.size_) {
         std::cout << "Linear copy ctor" << std::endl;
@@ -132,7 +132,7 @@ struct Linear : private LinearBuf<T> {
 template <typename T>
 struct JaggedBuf {
 protected:
-    T **arr_;
+    T **arr_{};
     size_t size_1_ = 0;
     size_t size_2_ = 0;
 
@@ -183,6 +183,9 @@ struct Jagged : private JaggedBuf<T> {
     //------------------------ big five ----------------------------//
     Jagged(size_t size_1 = 0, size_t size_2 = 0) : JaggedBuf<T>(size_1, size_2) {}
 
+    Jagged(Jagged &&rhs) noexcept = default;
+    Jagged &operator=(Jagged &&rhs) noexcept = default;
+
     Jagged(const Jagged &rhs) : JaggedBuf<T>(rhs.size_1_, rhs.size_2_) {
         std::cout << "Jagged copy ctor" << std::endl;
         size_1_ = 0;
@@ -193,7 +196,9 @@ struct Jagged : private JaggedBuf<T> {
                 ++size_2_;
             }
             ++size_1_;
+            size_2_ = 0;
         }
+        size_2_ = rhs.size_2_;
     }
 
     Jagged &operator=(const Jagged &rhs) {
@@ -222,13 +227,11 @@ struct Jagged : private JaggedBuf<T> {
 
         size_t i = 0;
         for(auto it = start; it != fin; ++i) {
-            size_t j = 0;
             size_t rem = 0;
             auto dist = std::distance(it, fin);
             rem = std::min(size_2_, static_cast<size_t>(dist));
             std::copy_n(it, rem, arr_[i]);
-            j = rem - 1;
-            std::advance(it, j + 1);
+            std::advance(it, rem);
 
             if(rem == dist)
                 std::fill_n(arr_[i] + rem, size_2_ - rem, T{});
@@ -238,7 +241,7 @@ struct Jagged : private JaggedBuf<T> {
             std::fill_n(arr_[i], size_2_, T{});
     }
 
-    bool equal(const Jagged &rhs) const{
+    bool equal(const Jagged &rhs) const {
         if(size_1_ != rhs.size_1_ || size_2_ != rhs.size_2_)
             return false;
         for (size_t i = 0; i < size_1_; ++i) {

@@ -7,7 +7,7 @@
 namespace cmp {
 
 int dbl_cmp(const double x, const double y) {
-    const double epsilon = 10E-15;
+    const double epsilon = 10E-16;
 
     if (std::abs(x - y) < epsilon)
         return 0;
@@ -36,7 +36,7 @@ protected:
         const T& operator[](size_t col) const { return row_[col]; }
     };
 
-
+    //here iterator
     //make exeption safe 
     template <typename ArrU, typename U>    
     void copy(const Matrix<ArrU, U> &rhs) {
@@ -144,8 +144,6 @@ private:
     using Matrix<ArrT, T>::cols_;
     using Matrix<ArrT, T>::matrix_;
 
-    //using Matrix<ArrT, T>::copy;
-
 public:
 //-------------------------- CONSTRUCTORS --------------------------//
 
@@ -174,29 +172,30 @@ public:
         size_t col;
     };
 
-
-
 //--------------------- DETERMINANT CALCULATION --------------------//
-    Elem max_elem(size_t row, size_t col) {
+//standard algo
+//private
+    Elem max_elem(size_t row, size_t col) const {
 
         Elem max {};
         for(size_t i = row; i < rows_; ++i) {
-            for(size_t j = col; j < cols_; ++j) {
-                if(std::abs(matrix_[i * cols_ + j]) > std::abs(max.value)) {
-                    max.value = matrix_[i * cols_ + j];
-                    max.row = i;
-                    max.col = j;
-                }
+            T* start = matrix_.get_n_row(i * cols_) + col;
+            T* fin = matrix_.get_n_row(i * cols_) + cols_;
+            auto* res = std::max_element(start, fin, cmp::dbl_cmp);
+
+            if (cmp::dbl_cmp(std::abs(*res), std::abs(max.value)) > 0) {
+                max.value = *res;
+                max.row = i;
+                max.col = col + std::distance(start, res);
             }
         }
 
         return max;
     }
 
-    
     void swap_rows(size_t row_1, size_t row_2) {
-        auto first = matrix_.get_n_row(row_1 * cols_);
-        auto second = matrix_.get_n_row(row_2 * cols_);
+        auto* first = matrix_.get_n_row(row_1 * cols_);
+        auto* second = matrix_.get_n_row(row_2 * cols_);
         std::swap_ranges(first, first + cols_, second);
     }
 
@@ -207,41 +206,34 @@ public:
         }
     }
 
-
     void eliminate(size_t row) {
-
         double coef = 0.0;
         for(size_t i = row + 1; i < rows_; ++i) {
-            coef = (double)matrix_[i * cols_ + row] / matrix_[row * cols_ + row];
-            std::cout << "coef " << coef << std::endl;
-            for(int j = row; j < cols_; ++j)
+            coef = matrix_[i * cols_ + row] / matrix_[row * cols_ + row];
+            for(size_t j = row; j < cols_; ++j)
                 matrix_[i * cols_ + j] -= coef * matrix_[row * cols_ + j];
         }
-        std::cout << *this << std::endl;
     }
 
-    T mult_diagonal() {
+    double mult_diagonal() const {
         double diag = 1.0;
         for(size_t i = 0; i < rows_; ++i)
-            diag *= (double)matrix_[i * cols_ + i];
-        return diag;
-    }
+            diag *= matrix_[i * cols_ + i];
 
+        return cmp::dbl_cmp(diag, 0.0) ? diag : 0.0;
+    }
+//tp do const
     T calc_det() {
         int sign = 1;
         size_t i {};
         size_t j {};
+        //tmp matrix
 
         while(i < rows_ - 1 && j < cols_ - 1) {
-
             Elem pivot = max_elem(i, i);
-            //std::cout << " pivot.value " << pivot.value << std::endl;
 
-            if(cmp::dbl_cmp(pivot.value, 0.0) == 0 && i == 0) {
-                std::cout << "im here " << std::endl;
+            if(cmp::dbl_cmp(pivot.value, 0.0) == 0 && i == 0)
                 return 0;
-
-            }
 
             if(i != pivot.row) {
                 swap_rows(i, pivot.row);
@@ -257,7 +249,7 @@ public:
             ++i;
             ++j;
         }
-
+        std::cout << *this << std::endl;
         T det = mult_diagonal() * sign;
         return det;
     }

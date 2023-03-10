@@ -16,13 +16,15 @@ set(SRCS
   runner.cpp
   test_containers_ctors.cpp
   test_matrix_ctors.cpp
+  test_determinant.cpp
 )
 set (EXEC_FILE "tests_runner")
 
 add_executable(${EXEC_FILE} ${SRCS})
 
 target_link_libraries(${EXEC_FILE} GTest::gtest_main)
-target_link_libraries(${EXEC_FILE} ${LIBLIST})
+target_link_libraries(${EXEC_FILE} matrix)
+add_compile_definitions(TEST_PATH="${CMAKE_SOURCE_DIR}/test/end2end")
 
 include(GoogleTest)
 gtest_discover_tests(${EXEC_FILE})
