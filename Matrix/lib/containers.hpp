@@ -40,13 +40,11 @@ protected:
     LinearBuf &operator=(const LinearBuf &) = delete;
     LinearBuf(LinearBuf &&rhs) noexcept
         : arr_(rhs.arr_), size_(rhs.size_) {
-            std::cout << "LinearBuf move ctor" << std::endl;
         rhs.arr_ = nullptr;
         rhs.size_ = 0;
     }
 
     LinearBuf &operator=(LinearBuf &&rhs) noexcept {
-        std::cout << "LinearBuf move assign" << std::endl;
         std::swap(arr_, rhs.arr_);
         std::swap(size_, rhs.size_);
         return *this;
@@ -55,18 +53,14 @@ protected:
     LinearBuf(size_t sz = 0)
         : arr_((sz == 0) ? nullptr
         : static_cast<T *>(::operator new(sizeof(T) * sz))), size_(sz) {
-            std::cout << "LinearBuf ctor" << std::endl;
         }
 
     ~LinearBuf() {
-        std::cout << "LinearBuf dtor" << std::endl;
         destroy(arr_, arr_ + size_);
         ::operator delete(arr_);
     }
 };
 
-
-//TODO: think about class struct private public
 template <typename T>
 struct Linear : private LinearBuf<T> {
 
@@ -79,7 +73,6 @@ struct Linear : private LinearBuf<T> {
     Linear &operator=(Linear &&rhs) noexcept = default;
 
     Linear(const Linear &rhs) : LinearBuf<T>(rhs.size_) {
-        std::cout << "Linear copy ctor" << std::endl;
         size_ = 0;
         while (size_ < rhs.size_) {
             construct(arr_ + size_, rhs.arr_[size_]);
@@ -88,7 +81,6 @@ struct Linear : private LinearBuf<T> {
     }
 
     Linear &operator=(const Linear &rhs) {
-        std::cout << "Linear copy assign" << std::endl;
         Linear tmp(rhs);
         std::swap(*this, tmp);
         return *this;
@@ -141,14 +133,12 @@ protected:
     JaggedBuf &operator=(const JaggedBuf &) = delete;
     JaggedBuf(JaggedBuf &&rhs) noexcept
         : arr_(rhs.arr_), size_1_(rhs.size_1_), size_2_(rhs.size_2_) {
-            std::cout << "JaggedBuf move ctor" << std::endl;
         rhs.arr_ = nullptr;
         rhs.size_1_ = 0;
         rhs.size_2_ = 0;
     }
 
     JaggedBuf &operator=(JaggedBuf &&rhs) noexcept {
-        std::cout << "JaggedBuf move assign" << std::endl;
         std::swap(arr_, rhs.arr_);
         std::swap(size_1_, rhs.size_1_);
         std::swap(size_2_, rhs.size_2_);
@@ -158,13 +148,11 @@ protected:
     JaggedBuf(size_t size_1 = 0, size_t size_2 = 0)
             : arr_((size_1 == 0 || size_2 == 0) ? nullptr
             : static_cast<T **>(::operator new(sizeof(T*) * size_1))), size_1_(size_1), size_2_(size_2) {
-            std::cout << "JaggedBuf ctor" << std::endl;
             for (size_t i = 0; i < size_1_; ++i)
                 arr_[i] = static_cast<T *>(::operator new(sizeof(T) * size_2_));
     }
 
     ~JaggedBuf() {
-        std::cout << "JaggedBuf dtor" << std::endl;
         for (size_t i = 0; i < size_1_; ++i) {
             destroy(arr_[i], arr_[i] + size_2_);
             ::operator delete(arr_[i]);
@@ -187,7 +175,6 @@ struct Jagged : private JaggedBuf<T> {
     Jagged &operator=(Jagged &&rhs) noexcept = default;
 
     Jagged(const Jagged &rhs) : JaggedBuf<T>(rhs.size_1_, rhs.size_2_) {
-        std::cout << "Jagged copy ctor" << std::endl;
         size_1_ = 0;
         size_2_ = 0;
         while (size_1_ < rhs.size_1_) {
@@ -202,7 +189,6 @@ struct Jagged : private JaggedBuf<T> {
     }
 
     Jagged &operator=(const Jagged &rhs) {
-        std::cout << "Jagged copy assign" << std::endl;
         Jagged tmp(rhs);
         std::swap(*this, tmp);
         return *this;

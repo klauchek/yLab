@@ -14,9 +14,7 @@ target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
 set(SRCS
   runner.cpp
-  test_containers_ctors.cpp
-  test_matrix_ctors.cpp
-  test_determinant.cpp
+  test.cpp
 )
 set (EXEC_FILE "tests_runner")
 

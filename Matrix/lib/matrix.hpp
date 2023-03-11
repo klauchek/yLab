@@ -2,7 +2,9 @@
 #define MATRIX__HPP__
 
 #include <iostream>
+#include <iomanip>
 #include "containers.hpp"
+#include <cassert>
 
 namespace cmp {
 
@@ -36,21 +38,18 @@ protected:
         const T& operator[](size_t col) const { return row_[col]; }
     };
 
-    //here iterator
-    //make exeption safe 
+    //someday i will rewrite it with iterators
     template <typename ArrU, typename U>    
     void copy(const Matrix<ArrU, U> &rhs) {
+        ArrT tmp(rhs.n_rows(), rhs.n_cols());
         for(size_t i = 0; i < rhs.n_rows(); ++i)
             for(size_t j = 0; j < rhs.n_cols(); ++j)
-                matrix_[i * cols_ + j] = rhs[i][j];
-
-        //copy in tmp
-        //move from tmp
+                tmp[i * cols_ + j] = rhs[i][j];
+        matrix_ = std::move(tmp);
     }
 
 public:
 
-    //получает строку -- первые []
     ProxyRow operator[] (size_t n) {
         return ProxyRow{ matrix_.get_n_row(n * cols_) };
     }
@@ -59,24 +58,20 @@ public:
     }
     
 
-    //filled with T
+    // filled with T
     Matrix(size_t rows, size_t cols, T val = T{}) : matrix_(rows, cols), rows_(rows), cols_(cols) {
-        std::cout << "matrix value ctor " << std::endl;
         matrix_.fill(val);
     }
     
-    //из заданной последовательности
+    // from two iterators
     template <typename It>
     Matrix(size_t rows, size_t cols, It start, It fin) : matrix_(rows, cols), rows_(rows), cols_(cols) {
-        std::cout << "matrix container ctor " << std::endl;
         matrix_.fill(start, fin);
     }
 
-    //coercion ctor
-    //
+    // coercion ctor
     template <typename ArrU, typename U>
     Matrix (const Matrix<ArrU, U> &rhs) : Matrix<ArrT, T>(rhs.n_rows(), rhs.n_cols()) {
-        std::cout << " Matr coercion " << std::endl;
         copy(rhs);
     }
 
@@ -135,6 +130,10 @@ bool operator == (const Matrix<ArrT, T> &lhs, const Matrix<ArrT, T> &rhs) {
     return lhs.equal(rhs);
 }
 
+//------------------------------------------------------------------//
+//------------------------- SQUARE MATRIX --------------------------//
+//------------------------------------------------------------------//
+
 template <typename ArrT, typename T>
 class SquareMatrix final : public Matrix<ArrT, T> {
 
@@ -144,44 +143,20 @@ private:
     using Matrix<ArrT, T>::cols_;
     using Matrix<ArrT, T>::matrix_;
 
-public:
-//-------------------------- CONSTRUCTORS --------------------------//
-
-    //filled with T
-    SquareMatrix(size_t sz, T val = T{}) : Matrix<ArrT, T>(sz, sz, val) {}
-    
-    //из заданной последовательности
-    template <typename It>
-    SquareMatrix(size_t sz, It start, It fin) : Matrix<ArrT, T>(sz, sz, start, fin) {}
-
-    template <typename ArrU, typename U>
-    SquareMatrix (const SquareMatrix<ArrU, U> &rhs) : Matrix<ArrT, T>(rhs) {}
-
-    static SquareMatrix eye(size_t sz) {
-        std::cout << "matrix eye ctor " << std::endl;
-        SquareMatrix<ArrT, T> matr {sz};
-        for(size_t i = 0; i < sz; ++i)
-            matr[i][i] = T{1};
-
-        return matr;
-    }
-
+//------------------ FOR DETERMINANT CALCULATION -------------------//
     struct Elem {
         T value;
         size_t row;
         size_t col;
     };
 
-//--------------------- DETERMINANT CALCULATION --------------------//
-//standard algo
-//private
     Elem max_elem(size_t row, size_t col) const {
 
         Elem max {};
         for(size_t i = row; i < rows_; ++i) {
             T* start = matrix_.get_n_row(i * cols_) + col;
             T* fin = matrix_.get_n_row(i * cols_) + cols_;
-            auto* res = std::max_element(start, fin, cmp::dbl_cmp);
+            auto* res = std::max_element(start, fin, [](auto x, auto y){ return cmp::dbl_cmp(std::abs(x), std::abs(y)) < 0;});
 
             if (cmp::dbl_cmp(std::abs(*res), std::abs(max.value)) > 0) {
                 max.value = *res;
@@ -189,7 +164,6 @@ public:
                 max.col = col + std::distance(start, res);
             }
         }
-
         return max;
     }
 
@@ -209,6 +183,7 @@ public:
     void eliminate(size_t row) {
         double coef = 0.0;
         for(size_t i = row + 1; i < rows_; ++i) {
+            assert(matrix_[row * cols_ + row] != 0);
             coef = matrix_[i * cols_ + row] / matrix_[row * cols_ + row];
             for(size_t j = row; j < cols_; ++j)
                 matrix_[i * cols_ + j] -= coef * matrix_[row * cols_ + j];
@@ -219,42 +194,59 @@ public:
         double diag = 1.0;
         for(size_t i = 0; i < rows_; ++i)
             diag *= matrix_[i * cols_ + i];
-
-        return cmp::dbl_cmp(diag, 0.0) ? diag : 0.0;
+        return diag;
     }
-//tp do const
-    T calc_det() {
+
+public:
+//-------------------------- CONSTRUCTORS --------------------------//
+
+    SquareMatrix(size_t sz, T val = T{}) : Matrix<ArrT, T>(sz, sz, val) {}
+    
+    template <typename It>
+    SquareMatrix(size_t sz, It start, It fin) : Matrix<ArrT, T>(sz, sz, start, fin) {}
+
+    template <typename ArrU, typename U>
+    SquareMatrix (const SquareMatrix<ArrU, U> &rhs) : Matrix<ArrT, T>(rhs) {}
+
+    static SquareMatrix eye(size_t sz) {
+        SquareMatrix<ArrT, T> matr {sz};
+        for(size_t i = 0; i < sz; ++i)
+            matr[i][i] = T{1};
+
+        return matr;
+    }
+
+//--------------------- DETERMINANT CALCULATION --------------------//
+    T calc_det() const {
         int sign = 1;
         size_t i {};
         size_t j {};
-        //tmp matrix
+        SquareMatrix<ArrT, T> tmp_matr{*this};
 
         while(i < rows_ - 1 && j < cols_ - 1) {
-            Elem pivot = max_elem(i, i);
 
+            Elem pivot = tmp_matr.max_elem(i, i);
             if(cmp::dbl_cmp(pivot.value, 0.0) == 0 && i == 0)
                 return 0;
 
             if(i != pivot.row) {
-                swap_rows(i, pivot.row);
+                tmp_matr.swap_rows(i, pivot.row);
                 sign *= -1;
             }
             if(j != pivot.col) {
-                swap_columns(j, pivot.col);
+                tmp_matr.swap_columns(j, pivot.col);
                 sign *= -1;
             }
 
-            if(cmp::dbl_cmp(matrix_[i * cols_ + i], 0.0) != 0)
-                eliminate(i);
+            if(cmp::dbl_cmp(tmp_matr.matrix_[i * cols_ + i], 0.0) != 0)
+                tmp_matr.eliminate(i);
             ++i;
             ++j;
         }
-        std::cout << *this << std::endl;
-        T det = mult_diagonal() * sign;
-        return det;
+        
+        T det = tmp_matr.mult_diagonal() * sign;
+        return cmp::dbl_cmp(det, 0.0) ? det : 0.0;
     }
-
-
 };
 
 } //namespace matrix
