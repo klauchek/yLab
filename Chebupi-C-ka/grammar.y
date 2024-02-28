@@ -51,7 +51,12 @@ parser::token_type yylex(parser::semantic_type* yylval,
   SCOLON  ";"
   LBR     "("    
   RBR     ")"
-  LVAL
+  LCBR     "{"    
+  RCBR     "}"
+  LVAL     
+  IF       "if"
+  WHILE    "while"
+  PRINT    "print"
   ERR
 ;
 
@@ -76,19 +81,25 @@ parser::token_type yylex(parser::semantic_type* yylval,
 
 %%
 
-program: tree               { std::cout << "tree\n"; }
+program: tree               { std::cout << "tree\n"; 
+                              std::cout << driver << "\n";}
 ;
 
 tree : scope                { std::cout << "scope\n"; }
 ;
 
-scope: statement SCOLON scope  { std::cout << "statement SCOLON scope\n"; }
-      | statement SCOLON         { std::cout << "statement SCOLON\n";       }
+scope: LCBR statement_list RCBR scope { std::cout << "LCBR statement_list RCBR statement_list\n"; }
+      | statement_list { std::cout << "statement in scope\n"; }
 ;
 
-statement: assign              { std::cout << "assign\n";}
-        | expr                 { std::cout << "expr\n";}
-        | %empty
+statement_list : statement SCOLON statement_list { std::cout << "statement SCOLON statement\n"; }
+               | statement SCOLON           { std::cout << "statement SCOLON\n"; }
+               | IF LBR statement RBR  scope                 { std::cout << "if\n"; }
+               | WHILE LBR statement RBR  scope                { std::cout << "while\n"; }
+               | PRINT statement SCOLON                               { std::cout << "print\n"; } // scope ???
+
+statement: assign               { std::cout << "assign\n";}
+        | expr                { std::cout << "expr\n";}
 ;
 
 assign: LVAL EQUAL expr        { std::cout << "LVAL EQ expr\n";}

@@ -20,9 +20,14 @@ VAR     [a-zA-Z][a-zA-Z_0-9]*
 "*"               return yy::parser::token_type::MUL;
 "/"               return yy::parser::token_type::DIV;
 {DIGIT1}{DIGIT}*  return yy::parser::token_type::NUMBER;
+"if"              return yy::parser::token_type::IF;
+"while"           return yy::parser::token_type::WHILE;
+"print"           return yy::parser::token_type::PRINT;
 {VAR}             return yy::parser::token_type::LVAL;
 "("               return yy::parser::token_type::LBR;
 ")"               return yy::parser::token_type::RBR;
+"{"               return yy::parser::token_type::LCBR;
+"}"               return yy::parser::token_type::RCBR;
 .			            return yy::parser::token_type::ERR;
 
 %%
